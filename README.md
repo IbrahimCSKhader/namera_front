@@ -1,18 +1,15 @@
-# Namira Frontend
+# Handmade Resin Gifts Frontend
 
-Frontend foundation for the Namira project.
+React + TypeScript + Vite frontend for an Arabic RTL handmade gifts store.
 
-This project is a React + TypeScript + Vite app prepared for:
+## Features
 
-- Arabic RTL user interface
-- Login page
-- Register page
-- Customer profile page
-- Auth context
+- Responsive home page inspired by the Stitch resin boutique references
+- Login with phone number, email, or username
+- Register flow with full name, phone, address, optional email, password confirmation, and terms approval
+- Auth context with token persistence
 - Protected customer and owner routes
-- Shared UI components
-
-The visual direction follows the Stitch-generated Namira / resin boutique UI reference: soft pink theme, rounded inputs, pill buttons, and RTL-first layouts.
+- Customer profile page
 
 ## Tech Stack
 
@@ -21,19 +18,7 @@ The visual direction follows the Stitch-generated Namira / resin boutique UI ref
 - Vite
 - React Router
 - CSS variables
-
-## Project Structure
-
-The project is organized by feature and topic:
-
-- `src/app/router`
-- `src/app/providers`
-- `src/features/authentication`
-- `src/features/customer`
-- `src/shared/components`
-- `src/shared/services`
-- `src/shared/constants`
-- `src/styles`
+- Vitest
 
 ## Local Setup
 
@@ -43,15 +28,7 @@ Install packages:
 npm install
 ```
 
-Create local environment files only when needed. Real environment files are intentionally ignored by Git.
-
 Required environment variable:
-
-```text
-VITE_API_BASE_URL
-```
-
-Example:
 
 ```text
 VITE_API_BASE_URL=http://localhost:5074/api
@@ -69,16 +46,12 @@ Build:
 npm run build
 ```
 
+Run tests:
+
+```powershell
+npm test
+```
+
 ## Security Notes
 
 Do not commit real API URLs for private environments, tokens, certificates, private keys, or local environment files.
-
-Ignored local files include:
-
-- `.env`
-- `.env.*`
-- `*.pfx`
-- `*.pem`
-- `*.key`
-- `*.crt`
-- `*.cer`

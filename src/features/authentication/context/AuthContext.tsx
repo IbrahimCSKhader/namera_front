@@ -16,7 +16,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (request: LoginRequest) => Promise<CurrentUser>;
-  register: (request: RegisterRequest) => Promise<void>;
+  register: (request: RegisterRequest) => Promise<CurrentUser>;
   refreshCurrentUser: () => Promise<void>;
   logout: () => void;
 };
@@ -79,7 +79,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const register = useCallback(async (request: RegisterRequest) => {
-    await authApi.register(request);
+    const response = await authApi.register(request);
+
+    if (!response.data) {
+      throw new Error(response.message);
+    }
+
+    setToken(response.data.token);
+    setStoredUser(response.data.user);
+    setTokenState(response.data.token);
+    setUser(response.data.user);
+
+    return response.data.user;
   }, []);
 
   const value = useMemo<AuthContextValue>(

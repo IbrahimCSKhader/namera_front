@@ -12,7 +12,7 @@ export function CustomerLayout({ children }: CustomerLayoutProps) {
     <main className="app-page">
       <header className="app-header">
         <div>
-          <p className="eyebrow">نميرة</p>
+          <p className="eyebrow">حسابي</p>
           <h1>مرحباً {user?.firstName}</h1>
         </div>
         <button className="text-button" type="button" onClick={logout}>

@@ -7,13 +7,13 @@ import { ROUTES } from '../../../shared/constants/routes';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import { useAuth } from '../hooks/useAuth';
 
-type LoginFormState = {
-  phoneNumber: string;
+export type LoginFormState = {
+  identifier: string;
   password: string;
 };
 
 const initialFormState: LoginFormState = {
-  phoneNumber: '',
+  identifier: '',
   password: '',
 };
 
@@ -26,7 +26,7 @@ export function LoginForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const validationErrors = validateForm(formState);
+    const validationErrors = validateLoginForm(formState);
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -37,7 +37,10 @@ export function LoginForm() {
     setErrors([]);
 
     try {
-      const user = await login(formState);
+      const user = await login({
+        identifier: formState.identifier.trim(),
+        password: formState.password,
+      });
       navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerProfile, { replace: true });
     } catch (error) {
       setErrors(resolveErrors(error));
@@ -50,13 +53,12 @@ export function LoginForm() {
     <form className="form-stack" onSubmit={handleSubmit}>
       <FormError errors={errors} />
       <Input
-        label="رقم الهاتف"
-        name="phoneNumber"
-        type="tel"
-        value={formState.phoneNumber}
+        label="رقم الهاتف أو البريد الإلكتروني أو اسم المستخدم"
+        name="identifier"
+        value={formState.identifier}
         placeholder="0599999999"
         dir="ltr"
-        onChange={(value) => setFormState((current) => ({ ...current, phoneNumber: value }))}
+        onChange={(value) => setFormState((current) => ({ ...current, identifier: value }))}
       />
       <Input
         label="كلمة المرور"
@@ -73,11 +75,11 @@ export function LoginForm() {
   );
 }
 
-function validateForm(formState: LoginFormState): string[] {
+export function validateLoginForm(formState: LoginFormState): string[] {
   const errors: string[] = [];
 
-  if (!formState.phoneNumber.trim()) {
-    errors.push('رقم الهاتف مطلوب');
+  if (!formState.identifier.trim()) {
+    errors.push('رقم الهاتف أو البريد الإلكتروني أو اسم المستخدم مطلوب');
   }
 
   if (!formState.password.trim()) {
@@ -94,5 +96,5 @@ function resolveErrors(error: unknown): string[] {
     return apiError.errors;
   }
 
-  return [apiError.message ?? 'تعذر تسجيل الدخول. حاول مرة أخرى.'];
+  return [apiError.message ?? 'تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.'];
 }

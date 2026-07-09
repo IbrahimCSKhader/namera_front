@@ -69,7 +69,7 @@ export function CustomerProfileForm() {
         });
       }
 
-      setSuccessMessage(response.message);
+      setSuccessMessage(response.message || 'تم حفظ التغييرات بنجاح');
     } catch (error) {
       setErrors(resolveErrors(error));
     } finally {

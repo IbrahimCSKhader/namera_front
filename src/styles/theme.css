@@ -1,23 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-  --color-primary: #c2185b;
-  --color-primary-dark: #9b0044;
-  --color-primary-light: #ffb1c2;
-  --color-background: #fff8f9;
-  --color-surface: #fff9fc;
+  --color-primary: #8a4f37;
+  --color-primary-dark: #6f3822;
+  --color-primary-light: #d48c70;
+  --color-primary-soft: #ffdbce;
+  --color-background: #fcf9f8;
+  --color-surface: #f6f3f2;
   --color-surface-strong: #ffffff;
-  --color-text: #23181f;
-  --color-text-muted: #594045;
-  --color-border: #e1bec4;
-  --color-border-soft: #f3d4e3;
+  --color-text: #1b1c1c;
+  --color-text-muted: #64514a;
+  --color-border: #d8c2bb;
+  --color-border-soft: #eadbd6;
   --color-error: #ba1a1a;
   --color-success: #20744a;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
-  --shadow-soft: 0 8px 30px rgba(42, 31, 38, 0.08);
-  --shadow-pink: 0 8px 30px rgba(194, 24, 91, 0.14);
-  --container-max: 1120px;
+  --shadow-soft: 0 16px 42px rgba(87, 39, 18, 0.08);
+  --shadow-warm: 0 18px 46px rgba(212, 140, 112, 0.16);
+  --container-max: 1180px;
   --font-family: 'Cairo', 'Tajawal', 'Segoe UI', sans-serif;
+  --font-display: 'Playfair Display', 'Cairo', serif;
 }

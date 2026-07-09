@@ -1,4 +1,6 @@
 import { type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 
 type PublicLayoutProps = {
   title: string;
@@ -10,10 +12,17 @@ type PublicLayoutProps = {
 export function PublicLayout({ title, subtitle, sideTitle, children }: PublicLayoutProps) {
   return (
     <main className="auth-page">
-      <section className="brand-header" aria-label="نميرة">
-        <div className="brand-mark">ن</div>
-        <h1>نميرة</h1>
-        <p>فن الريزن بلمسة عصرية فاخرة</p>
+      <div className="auth-topbar">
+        <Link className="site-logo" to={ROUTES.home}>
+          <span className="site-logo-mark">ر</span>
+          <span>هدايا ريزن يدوية</span>
+        </Link>
+        <Link to={ROUTES.home}>العودة للرئيسية</Link>
+      </div>
+      <section className="brand-header" aria-label="هدايا ريزن يدوية">
+        <div className="brand-mark">ر</div>
+        <h1>هدايا ريزن يدوية</h1>
+        <p>عالم من الجمال والتفاصيل المصنوعة بعناية</p>
       </section>
       <section className="auth-shell">
         <aside className="auth-art" aria-hidden="true">

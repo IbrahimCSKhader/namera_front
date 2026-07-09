@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
-import { LoginForm } from '../components/LoginForm';
 import { PublicLayout } from '../../../shared/components/layout/PublicLayout';
 import { ROUTES } from '../../../shared/constants/routes';
+import { LoginForm } from '../components/LoginForm';
 
 export function LoginPage() {
   return (
     <PublicLayout
-      title="أهلاً بك مجدداً"
-      subtitle="يرجى إدخال بياناتك للوصول إلى حسابك"
-      sideTitle="قطع فنية تحكي قصتك"
+      title="مرحباً بك مجدداً"
+      subtitle="سجل دخولك لمتابعة طلباتك وتفاصيل حسابك"
+      sideTitle="قطع فنية تحكي قصتك بتفاصيل دافئة"
     >
       <LoginForm />
       <p className="auth-switch">

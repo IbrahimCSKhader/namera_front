@@ -12,7 +12,7 @@ export function OwnerLayout({ children }: OwnerLayoutProps) {
     <main className="app-page">
       <header className="app-header">
         <div>
-          <p className="eyebrow">نميرة</p>
+          <p className="eyebrow">لوحة الإدارة</p>
           <h1>مرحباً {user?.firstName}</h1>
         </div>
         <button className="text-button" type="button" onClick={logout}>
