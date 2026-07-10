@@ -6,13 +6,13 @@ import { LoginForm } from '../components/LoginForm';
 export function LoginPage() {
   return (
     <PublicLayout
-      title="مرحباً بك مجدداً"
-      subtitle="سجل دخولك لمتابعة طلباتك وتفاصيل حسابك"
-      sideTitle="قطع فنية تحكي قصتك بتفاصيل دافئة"
+      title="تسجيل الدخول"
+      subtitle="ادخل كصاحب محل أو زبون للوصول إلى لوحة التحكم المناسبة لحسابك."
+      sideTitle="هدايا ريزن يدوية بتفاصيل ناعمة وتغليف يليق بالمناسبة"
     >
       <LoginForm />
       <p className="auth-switch">
-        ليس لديك حساب؟ <Link to={ROUTES.register}>إنشاء حساب جديد</Link>
+        ليس لديك حساب؟ <Link to={ROUTES.register}>إنشاء حساب زبون جديد</Link>
       </p>
     </PublicLayout>
   );

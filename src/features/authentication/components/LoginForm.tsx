@@ -17,6 +17,21 @@ const initialFormState: LoginFormState = {
   password: '',
 };
 
+const demoAccounts = [
+  {
+    label: 'دخول صاحب المحل',
+    identifier: 'namer',
+    password: 'namera12345',
+    description: 'يفتح لوحة إدارة صاحب المحل',
+  },
+  {
+    label: 'دخول زبون تجريبي',
+    identifier: 'customer_demo',
+    password: 'Customer12345',
+    description: 'يفتح لوحة الزبون',
+  },
+];
+
 export function LoginForm() {
   const [formState, setFormState] = useState<LoginFormState>(initialFormState);
   const [errors, setErrors] = useState<string[]>([]);
@@ -41,7 +56,7 @@ export function LoginForm() {
         identifier: formState.identifier.trim(),
         password: formState.password,
       });
-      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerProfile, { replace: true });
+      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerDashboard, { replace: true });
     } catch (error) {
       setErrors(resolveErrors(error));
     } finally {
@@ -51,12 +66,29 @@ export function LoginForm() {
 
   return (
     <form className="form-stack" onSubmit={handleSubmit}>
+      <div className="demo-login-grid" aria-label="حسابات تجريبية">
+        {demoAccounts.map((account) => (
+          <button
+            className="demo-login-card"
+            key={account.identifier}
+            type="button"
+            onClick={() => {
+              setFormState({ identifier: account.identifier, password: account.password });
+              setErrors([]);
+            }}
+          >
+            <span>{account.label}</span>
+            <small>{account.description}</small>
+          </button>
+        ))}
+      </div>
+
       <FormError errors={errors} />
       <Input
         label="رقم الهاتف أو البريد الإلكتروني أو اسم المستخدم"
         name="identifier"
         value={formState.identifier}
-        placeholder="0599999999"
+        placeholder="namer"
         dir="ltr"
         onChange={(value) => setFormState((current) => ({ ...current, identifier: value }))}
       />

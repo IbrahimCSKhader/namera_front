@@ -6,9 +6,9 @@ import { RegisterForm } from '../components/RegisterForm';
 export function RegisterPage() {
   return (
     <PublicLayout
-      title="إنشاء حساب"
-      subtitle="ابدأ رحلتك في عالم الحرف اليدوية الراقية اليوم"
-      sideTitle="هدايا يدوية بتفاصيل ناعمة وتغليف يليق بالمناسبة"
+      title="إنشاء حساب زبون"
+      subtitle="أنشئ حسابك لتجربة التسجيل ثم افتح لوحة الزبون مباشرة."
+      sideTitle="ابدأ رحلتك في متجر Namira للهدايا اليدوية"
     >
       <RegisterForm />
       <p className="auth-switch auth-switch-box">

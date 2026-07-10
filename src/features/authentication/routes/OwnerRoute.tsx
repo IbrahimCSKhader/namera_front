@@ -13,7 +13,7 @@ export function OwnerRoute({ children }: OwnerRouteProps) {
 
   return (
     <ProtectedRoute>
-      {user?.role === 'Owner' ? children : <Navigate to={ROUTES.customerProfile} replace />}
+      {user?.role === 'Owner' ? children : <Navigate to={ROUTES.customerDashboard} replace />}
     </ProtectedRoute>
   );
 }

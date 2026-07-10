@@ -49,7 +49,7 @@ export function RegisterForm() {
 
     try {
       const user = await register(buildRegisterRequest(formState));
-      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerProfile, { replace: true });
+      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerDashboard, { replace: true });
     } catch (error) {
       setErrors(resolveErrors(error));
     } finally {
@@ -124,7 +124,7 @@ export function RegisterForm() {
         <span>أوافق على الشروط والأحكام وسياسة الخصوصية</span>
       </label>
       <Button type="submit" isLoading={isSubmitting}>
-        إنشاء الحساب
+        إنشاء حساب زبون
       </Button>
     </form>
   );

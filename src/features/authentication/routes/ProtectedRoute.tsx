@@ -1,5 +1,5 @@
-import { Navigate, useLocation } from 'react-router-dom';
 import { type ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
 import { ROUTES } from '../../../shared/constants/routes';
 import { useAuth } from '../hooks/useAuth';
