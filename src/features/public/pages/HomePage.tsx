@@ -181,9 +181,7 @@ export function HomePage() {
                   <small>{product.category.name}</small>
                   <h3>{product.name}</h3>
                   <p>{product.shortDescription || copy.defaultDescription}</p>
-                  <strong>
-                    {product.basePrice.toLocaleString('ar')} {'\u20aa'}
-                  </strong>
+                  <strong>{product.priceLabel || (product.basePrice == null ? 'السعر عند الطلب' : `${product.basePrice.toLocaleString('ar')} ₪`)}</strong>
                 </div>
               </article>
             );
@@ -238,12 +236,21 @@ function createProduct(
     shortDescription: copy.defaultDescription,
     description: copy.defaultDescription,
     basePrice,
+    pricingType: 'fixed',
+    isPriceVisible: true,
+    priceLabel: `${basePrice.toLocaleString('ar')} ₪`,
+    currency: 'ILS',
     status: 'Active',
     isFeatured,
+    isNew: false,
     isCustomizable: true,
+    hasVariants: false,
+    madeToOrder: false,
+    allowOrdering: true,
     minimumQuantity: 1,
     maximumQuantity: 20,
     preparationTimeInDays: 5,
+    preparationNote: '',
     category,
     images: Array.from({ length: 6 }, (_, index) => ({
       id: `${slug}-${index}`,
@@ -252,5 +259,7 @@ function createProduct(
       isPrimary: index === 0,
       displayOrder: index + 1,
     })),
+    optionGroups: [],
+    customizationFields: [],
   };
 }

@@ -1,24 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-  --color-primary: #c2185b;
-  --color-primary-dark: #9b0044;
-  --color-primary-light: #ff78b7;
-  --color-primary-soft: #ffd9df;
-  --color-background: #fff8f9;
-  --color-surface: #fff0f6;
+  --color-primary: #d48c70;
+  --color-primary-dark: #8a4f37;
+  --color-primary-light: #ffb599;
+  --color-primary-soft: #ffdbce;
+  --color-background: #fcf9f8;
+  --color-surface: #f0eded;
   --color-surface-strong: #ffffff;
-  --color-text: #23181f;
-  --color-text-muted: #594045;
-  --color-border: #e1bec4;
-  --color-border-soft: #f3d4e3;
+  --color-text: #1b1c1c;
+  --color-text-muted: #53433e;
+  --color-border: #85736d;
+  --color-border-soft: #d8c2bb;
   --color-error: #ba1a1a;
   --color-success: #20744a;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
   --shadow-soft: 0 8px 30px rgba(42, 31, 38, 0.08);
-  --shadow-warm: 0 14px 40px rgba(194, 24, 91, 0.12);
+  --shadow-warm: 0 14px 40px rgba(212, 140, 112, 0.12);
   --container-max: 1280px;
   --font-family: 'Cairo', 'Tajawal', 'Be Vietnam Pro', 'Segoe UI', sans-serif;
   --font-display: 'Cairo', 'Tajawal', 'Be Vietnam Pro', sans-serif;

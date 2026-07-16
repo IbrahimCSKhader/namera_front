@@ -20,13 +20,36 @@ export type Product = {
   slug: string;
   shortDescription: string;
   description: string;
-  basePrice: number;
+  basePrice: number | null;
+  pricingType: 'fixed' | 'startingFrom' | 'optionsBased' | 'quote';
+  isPriceVisible: boolean;
+  priceLabel: string;
+  currency: string;
   status: string;
   isFeatured: boolean;
+  isNew: boolean;
   isCustomizable: boolean;
+  hasVariants: boolean;
+  madeToOrder: boolean;
+  allowOrdering: boolean;
   minimumQuantity: number;
   maximumQuantity: number | null;
   preparationTimeInDays: number;
+  preparationNote: string;
   category: ProductCategory;
   images: ProductImage[];
+  optionGroups: Array<{
+    id: string;
+    name: string;
+    isRequired: boolean;
+    values: Array<{ id: string; label: string; extraPrice: number; isDefault: boolean }>;
+  }>;
+  customizationFields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    isRequired: boolean;
+    additionalPrice: number;
+    choices: Array<{ id: string; label: string; additionalPrice: number }>;
+  }>;
 };

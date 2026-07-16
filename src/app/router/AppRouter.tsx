@@ -6,6 +6,9 @@ import { OwnerRoute } from '../../features/authentication/routes/OwnerRoute';
 import { CustomerDashboardPage } from '../../features/customer/pages/CustomerDashboardPage';
 import { CustomerProfilePage } from '../../features/customer/pages/CustomerProfilePage';
 import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPage';
+import { AddProductPage } from '../../features/products/admin/pages/AddProductPage';
+import { EditProductPage } from '../../features/products/admin/pages/EditProductPage';
+import { ProductsManagementPage } from '../../features/products/admin/pages/ProductsManagementPage';
 import { HomePage } from '../../features/public/pages/HomePage';
 import { ROUTES } from '../../shared/constants/routes';
 
@@ -36,6 +39,30 @@ export function AppRouter() {
         element={
           <OwnerRoute>
             <OwnerDashboardPage />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerProducts}
+        element={
+          <OwnerRoute>
+            <ProductsManagementPage />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerAddProduct}
+        element={
+          <OwnerRoute>
+            <AddProductPage />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerEditProduct}
+        element={
+          <OwnerRoute>
+            <EditProductPage />
           </OwnerRoute>
         }
       />

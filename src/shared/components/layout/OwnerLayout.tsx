@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../features/authentication/hooks/useAuth';
 import { ROUTES } from '../../constants/routes';
 
@@ -17,15 +17,24 @@ export function OwnerLayout({ children }: OwnerLayoutProps) {
   }
 
   return (
-    <main className="app-page">
-      <header className="app-header">
+    <main className="app-page owner-shell">
+      <header className="app-header owner-header">
         <div>
           <p className="eyebrow">لوحة الإدارة</p>
           <h1>مرحبًا {user?.firstName}</h1>
         </div>
-        <nav className="app-actions" aria-label="روابط صاحب المحل">
-          <Link className="text-button" to={ROUTES.ownerDashboard}>
-            الداشبورد
+        <nav className="app-actions" aria-label="روابط صاحبة المتجر">
+          <NavLink className="text-button" to={ROUTES.ownerDashboard}>
+            الرئيسية
+          </NavLink>
+          <NavLink className="text-button" to={ROUTES.ownerProducts}>
+            عرض المنتجات
+          </NavLink>
+          <NavLink className="text-button" to={ROUTES.ownerAddProduct}>
+            إدارة المنتجات
+          </NavLink>
+          <Link className="text-button" to={ROUTES.home}>
+            المتجر
           </Link>
           <button className="text-button" type="button" onClick={handleLogout}>
             تسجيل الخروج
