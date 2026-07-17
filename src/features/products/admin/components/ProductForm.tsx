@@ -95,8 +95,15 @@ export function ProductForm({
       <PreviewSection draft={draft} pricingLabel={pricing.priceLabel} />
 
       {Object.keys(errors).length > 0 ? (
-        <div className="form-error">
-          <p>راجعي الحقول المعلّمة قبل الحفظ.</p>
+        <div className="form-error validation-summary" role="alert">
+          <p>راجعي الحقول التالية قبل الحفظ:</p>
+          <ul>
+            {Object.values(errors)
+              .flat()
+              .map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+          </ul>
         </div>
       ) : null}
 
