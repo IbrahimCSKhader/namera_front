@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { OwnerLayout } from '../../../../shared/components/layout/OwnerLayout';
 import { ROUTES } from '../../../../shared/constants/routes';
+import { resolveMediaUrl } from '../../../../shared/utils/mediaUrl';
 import { getCategories } from '../../services/productApi';
 import { type ProductCategory } from '../../types/productTypes';
 import { archiveAdminProduct, getAdminProducts, publishAdminProduct } from '../services/adminProductService';
@@ -113,7 +114,7 @@ export function ProductsManagementPage() {
             <tbody>
               {products.map((product) => (
                 <tr key={product.id}>
-                  <td>{product.primaryImageUrl ? <img className="table-thumb" src={product.primaryImageUrl} alt={product.name} /> : <span className="table-thumb empty" />}</td>
+                  <td>{product.primaryImageUrl ? <img className="table-thumb" src={resolveMediaUrl(product.primaryImageUrl)} alt={product.name} /> : <span className="table-thumb empty" />}</td>
                   <td>{product.name}</td>
                   <td>{product.categoryName}</td>
                   <td>{product.priceLabel}</td>

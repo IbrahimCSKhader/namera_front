@@ -5,7 +5,12 @@ import { ROUTES } from '../../../../shared/constants/routes';
 import { getCategories } from '../../services/productApi';
 import { type ProductCategory } from '../../types/productTypes';
 import { ProductForm } from '../components/ProductForm';
-import { createAdminCategory, createAdminProduct } from '../services/adminProductService';
+import {
+  createAdminCategoryWithImage,
+  createAdminProduct,
+  uploadAdminCategoryImage,
+  uploadAdminProductImage,
+} from '../services/adminProductService';
 import { type ProductDraft, type ProductFieldErrors } from '../types/productAdminTypes';
 import { createEmptyProductDraft, normalizeProductDraft } from '../utils/productDraft';
 import { validateProductDraft } from '../utils/productValidation';
@@ -27,10 +32,17 @@ export function AddProductPage() {
     setCategories(response.data ?? []);
   }
 
-  async function handleCreateCategory(name: string) {
-    const category = await createAdminCategory(name);
+  async function handleCreateCategory(name: string, imageFile?: File | null) {
+    const categoryId = crypto.randomUUID();
+    const uploadedImage = imageFile ? await uploadAdminCategoryImage(categoryId, imageFile) : null;
+    const category = await createAdminCategoryWithImage(name, uploadedImage?.url ?? '', categoryId);
     setCategories((current) => [...current, category]);
     setDraft((current) => ({ ...current, categoryId: category.id }));
+  }
+
+  async function handleUploadProductImage(file: File) {
+    const uploadedImage = await uploadAdminProductImage(draft.id, file);
+    return uploadedImage.url;
   }
 
   async function handleSubmit() {
@@ -71,6 +83,7 @@ export function AddProductPage() {
         submitLabel="حفظ المنتج"
         onChange={setDraft}
         onCreateCategory={handleCreateCategory}
+        onUploadProductImage={handleUploadProductImage}
         onSubmit={handleSubmit}
       />
     </OwnerLayout>

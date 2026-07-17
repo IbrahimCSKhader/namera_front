@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BRAND } from '../../../shared/constants/brand';
 import { ROUTES } from '../../../shared/constants/routes';
+import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 import { ProductCard } from '../../products/components/ProductCard';
 import * as productApi from '../../products/services/productApi';
 import { type Product, type ProductCategory } from '../../products/types/productTypes';
@@ -50,7 +51,7 @@ export function HomePage() {
           <div className="shop-category-grid">
             {categories.slice(0, 5).map((category, index) => (
               <article className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.slug}>
-                {category.imageUrl ? <img src={category.imageUrl} alt={category.name} /> : <div className="shop-category-placeholder" />}
+                {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} /> : <div className="shop-category-placeholder" />}
                 <div>
                   <h3>{category.name}</h3>
                   {category.description ? <p>{category.description}</p> : null}

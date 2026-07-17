@@ -865,6 +865,42 @@ img {
   outline: none;
 }
 
+.file-picker-inline,
+.file-picker-card {
+  display: grid;
+  min-height: 48px;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  color: var(--color-primary-dark);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px dashed var(--color-border-soft);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.file-picker-inline input,
+.file-picker-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.file-picker-inline span,
+.file-picker-card span {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .field textarea,
 .admin-field textarea {
   padding-top: 12px;
@@ -1239,10 +1275,13 @@ img {
 .inline-create,
 .option-row {
   display: grid;
-  grid-template-columns: 1fr auto;
   gap: 10px;
   align-items: center;
   margin: 12px 0 16px;
+}
+
+.inline-create {
+  grid-template-columns: minmax(160px, 1fr) minmax(180px, 0.8fr) auto;
 }
 
 .option-row {

@@ -1,4 +1,5 @@
 import { type Product } from '../types/productTypes';
+import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 
 type ProductCardProps = {
   product: Product;
@@ -11,7 +12,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <article className="shop-product-card">
       <div className="shop-product-media">
         {primaryImage?.imageUrl ? (
-          <img src={primaryImage.imageUrl} alt={primaryImage.altText || product.name} />
+          <img src={resolveMediaUrl(primaryImage.imageUrl)} alt={primaryImage.altText || product.name} />
         ) : (
           <span className="shop-product-placeholder" />
         )}

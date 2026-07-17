@@ -1,5 +1,6 @@
 import { type FormEvent, type ReactNode, useMemo, useState } from 'react';
 import { type ProductCategory } from '../../types/productTypes';
+import { resolveMediaUrl } from '../../../../shared/utils/mediaUrl';
 import {
   type ProductCustomizationFieldDraft,
   type ProductDraft,
@@ -18,7 +19,8 @@ type ProductFormProps = {
   submitLabel: string;
   onChange: (draft: ProductDraft) => void;
   onSubmit: () => void;
-  onCreateCategory: (name: string) => Promise<void>;
+  onCreateCategory: (name: string, imageFile?: File | null) => Promise<void>;
+  onUploadProductImage: (file: File) => Promise<string>;
 };
 
 export function ProductForm({
@@ -30,8 +32,11 @@ export function ProductForm({
   onChange,
   onSubmit,
   onCreateCategory,
+  onUploadProductImage,
 }: ProductFormProps) {
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
   const pricing = useMemo(() => calculateProductPricingSummary(draft), [draft]);
 
   function update<K extends keyof ProductDraft>(key: K, value: ProductDraft[K]) {
@@ -43,8 +48,14 @@ export function ProductForm({
       return;
     }
 
-    await onCreateCategory(newCategoryName.trim());
-    setNewCategoryName('');
+    setIsCreatingCategory(true);
+    try {
+      await onCreateCategory(newCategoryName.trim(), newCategoryImage);
+      setNewCategoryName('');
+      setNewCategoryImage(null);
+    } finally {
+      setIsCreatingCategory(false);
+    }
   }
 
   function handleSubmit(event: FormEvent) {
@@ -59,11 +70,14 @@ export function ProductForm({
         draft={draft}
         errors={errors}
         newCategoryName={newCategoryName}
+        newCategoryImage={newCategoryImage}
+        isCreatingCategory={isCreatingCategory}
         onCreateCategory={handleCreateCategory}
+        onNewCategoryImageChange={setNewCategoryImage}
         onNewCategoryNameChange={setNewCategoryName}
         update={update}
       />
-      <ImagesSection draft={draft} errors={errors} onChange={onChange} />
+      <ImagesSection draft={draft} errors={errors} onChange={onChange} onUploadProductImage={onUploadProductImage} />
       <PricingSection draft={draft} pricingLabel={pricing.priceLabel} update={update} />
       <OptionsSection draft={draft} onChange={onChange} />
       <CustomizationSection draft={draft} onChange={onChange} />
@@ -98,13 +112,19 @@ function BasicInfoSection({
   draft,
   errors,
   newCategoryName,
+  newCategoryImage,
+  isCreatingCategory,
   update,
   onCreateCategory,
+  onNewCategoryImageChange,
   onNewCategoryNameChange,
 }: SectionProps & {
   categories: ProductCategory[];
   newCategoryName: string;
+  newCategoryImage: File | null;
+  isCreatingCategory: boolean;
   onCreateCategory: () => void;
+  onNewCategoryImageChange: (file: File | null) => void;
   onNewCategoryNameChange: (value: string) => void;
   update: <K extends keyof ProductDraft>(key: K, value: ProductDraft[K]) => void;
 }) {
@@ -142,8 +162,13 @@ function BasicInfoSection({
         </div>
         <div className="inline-create">
           <input value={newCategoryName} placeholder="تصنيف جديد" onChange={(event) => onNewCategoryNameChange(event.target.value)} />
-          <button className="button button-secondary" type="button" onClick={onCreateCategory}>
-            إضافة تصنيف
+          <label className="file-picker-inline">
+            صورة التصنيف
+            <input accept="image/*" type="file" onChange={(event) => onNewCategoryImageChange(event.target.files?.[0] ?? null)} />
+            <span>{newCategoryImage?.name ?? 'اختيار صورة'}</span>
+          </label>
+          <button className="button button-secondary" type="button" disabled={isCreatingCategory} onClick={onCreateCategory}>
+            {isCreatingCategory ? 'جار الإضافة...' : 'إضافة تصنيف'}
           </button>
         </div>
         <Field label="وصف مختصر">
@@ -157,7 +182,14 @@ function BasicInfoSection({
   );
 }
 
-function ImagesSection({ draft, errors, onChange }: SectionProps & { onChange: (draft: ProductDraft) => void }) {
+function ImagesSection({
+  draft,
+  errors,
+  onChange,
+  onUploadProductImage,
+}: SectionProps & { onChange: (draft: ProductDraft) => void; onUploadProductImage: (file: File) => Promise<string> }) {
+  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
+
   function updateImage(index: number, image: ProductImageDraft) {
     const images = draft.images.map((item, itemIndex) => (itemIndex === index ? image : item));
     onChange({ ...draft, images });
@@ -170,6 +202,26 @@ function ImagesSection({ draft, errors, onChange }: SectionProps & { onChange: (
     });
   }
 
+  async function uploadImage(index: number, file: File) {
+    const image = draft.images[index];
+    if (!image) {
+      return;
+    }
+
+    setUploadingImageId(image.id);
+    try {
+      const imageUrl = await onUploadProductImage(file);
+      updateImage(index, {
+        ...image,
+        imageUrl,
+        altText: image.altText || file.name.replace(/\.[^.]+$/, ''),
+        fileName: file.name,
+      });
+    } finally {
+      setUploadingImageId(null);
+    }
+  }
+
   return (
     <section className="form-section">
       <div className="section-kicker">02</div>
@@ -179,8 +231,16 @@ function ImagesSection({ draft, errors, onChange }: SectionProps & { onChange: (
         <div className="image-editor-grid">
           {draft.images.map((image, index) => (
             <article className="image-editor" key={image.id}>
-              <div className="image-preview">{image.imageUrl ? <img src={image.imageUrl} alt={image.altText || draft.name} /> : <span>معاينة</span>}</div>
-              <input value={image.imageUrl} placeholder="رابط الصورة" onChange={(event) => updateImage(index, { ...image, imageUrl: event.target.value })} />
+              <div className="image-preview">{image.imageUrl ? <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || draft.name} /> : <span>معاينة</span>}</div>
+              <label className="file-picker-card">
+                <input accept="image/*" type="file" onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    void uploadImage(index, file);
+                  }
+                }} />
+                <span>{uploadingImageId === image.id ? 'جار رفع الصورة...' : image.fileName || 'اختيار صورة من الجهاز'}</span>
+              </label>
               <input value={image.altText} placeholder="النص البديل" onChange={(event) => updateImage(index, { ...image, altText: event.target.value })} />
               <div className="row-actions">
                 <button className="text-button" type="button" onClick={() => markPrimary(index)}>
@@ -458,7 +518,7 @@ function PreviewSection({ draft, pricingLabel }: { draft: ProductDraft; pricingL
       <div>
         <h2>معاينة المنتج</h2>
         <article className="admin-product-preview">
-          <div className="preview-media">{primary?.imageUrl ? <img src={primary.imageUrl} alt={primary.altText || draft.name} /> : <span>صورة المنتج</span>}</div>
+          <div className="preview-media">{primary?.imageUrl ? <img src={resolveMediaUrl(primary.imageUrl)} alt={primary.altText || draft.name} /> : <span>صورة المنتج</span>}</div>
           <div>
             <span className="product-tag">{draft.status === 'published' ? 'منشور' : 'مسودة'}</span>
             <h3>{draft.name || 'اسم المنتج'}</h3>

@@ -43,6 +43,12 @@ type ProductDetailsResponse = Omit<ProductDraft, 'id' | 'images' | 'optionGroups
   }>;
 };
 
+type UploadedMediaResponse = {
+  url: string;
+  fileName: string;
+  size: number;
+};
+
 export type ProductListFilters = {
   search?: string;
   categoryId?: string;
@@ -114,9 +120,21 @@ export async function publishAdminProduct(id: string, publish: boolean): Promise
 }
 
 export async function createAdminCategory(name: string): Promise<ProductCategory> {
+  return createAdminCategoryWithImage(name);
+}
+
+export async function createAdminCategoryWithImage(
+  name: string,
+  imageUrl = '',
+  categoryId = crypto.randomUUID(),
+): Promise<ProductCategory> {
   const response = await apiClient<ApiResponse<ProductCategory>>('/admin/products/categories', {
     method: 'POST',
-    body: { name },
+    body: {
+      clientId: categoryId,
+      name,
+      imageUrl: imageUrl || undefined,
+    },
   });
 
   if (!response.data) {
@@ -126,8 +144,43 @@ export async function createAdminCategory(name: string): Promise<ProductCategory
   return response.data;
 }
 
+export async function uploadAdminProductImage(productId: string, file: File): Promise<UploadedMediaResponse> {
+  const formData = new FormData();
+  formData.set('productId', productId);
+  formData.set('file', file);
+
+  const response = await apiClient<ApiResponse<UploadedMediaResponse>>('/admin/products/uploads/product-image', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.data) {
+    throw new Error('لم يتم رفع صورة المنتج');
+  }
+
+  return response.data;
+}
+
+export async function uploadAdminCategoryImage(categoryId: string, file: File): Promise<UploadedMediaResponse> {
+  const formData = new FormData();
+  formData.set('categoryId', categoryId);
+  formData.set('file', file);
+
+  const response = await apiClient<ApiResponse<UploadedMediaResponse>>('/admin/products/uploads/category-image', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.data) {
+    throw new Error('لم يتم رفع صورة التصنيف');
+  }
+
+  return response.data;
+}
+
 function toProductRequest(draft: ProductDraft) {
   return {
+    clientId: draft.id,
     name: draft.name,
     slug: draft.slug || undefined,
     shortDescription: draft.shortDescription,

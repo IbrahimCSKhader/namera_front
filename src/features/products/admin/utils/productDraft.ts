@@ -7,7 +7,7 @@ import {
 
 export function createEmptyProductDraft(categoryId = ''): ProductDraft {
   return {
-    id: createId('product'),
+    id: createGuid(),
     name: '',
     slug: '',
     shortDescription: '',
@@ -203,4 +203,8 @@ function sortByOrder<T extends { displayOrder: number }>(items: T[]): T[] {
 
 export function createId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function createGuid(): string {
+  return crypto.randomUUID();
 }
