@@ -6,7 +6,7 @@ import { type ProductCategory } from '../../../features/products/types/productTy
 import { BRAND } from '../../constants/brand';
 import { ROUTES } from '../../constants/routes';
 
-const guestCartKey = 'namira_guest_cart';
+const guestCartKey = 'resin_bon_guest_cart';
 
 type NavItem = {
   label: string;
@@ -22,6 +22,9 @@ export function AppHeader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cartCount, setCartCount] = useState(() => readGuestCartCount());
+
+  const isOwner = user?.role === 'Owner';
+  const navItems = useMemo(() => (isOwner ? ownerNavItems : storeNavItems), [isOwner]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -42,16 +45,13 @@ export function AppHeader() {
     }
 
     window.addEventListener('storage', syncCartCount);
-    window.addEventListener('namira-cart-updated', syncCartCount);
+    window.addEventListener('resin-bon-cart-updated', syncCartCount);
 
     return () => {
       window.removeEventListener('storage', syncCartCount);
-      window.removeEventListener('namira-cart-updated', syncCartCount);
+      window.removeEventListener('resin-bon-cart-updated', syncCartCount);
     };
   }, []);
-
-  const isOwner = user?.role === 'Owner';
-  const navItems = useMemo(() => (isOwner ? ownerNavItems : storeNavItems), [isOwner]);
 
   function closeMenu() {
     setIsMenuOpen(false);
@@ -85,45 +85,8 @@ export function AppHeader() {
         </Link>
 
         <nav className="global-nav desktop-nav" aria-label="التنقل الرئيسي">
-          {navItems.map((item) =>
-            item.children ? (
-              <div className="nav-dropdown" key={item.label}>
-                <NavLink className="global-nav-link" to={item.to}>
-                  {item.label}
-                </NavLink>
-                <div className="dropdown-menu">
-                  {item.children.map((child) => (
-                    <Link key={child.label} to={child.to}>
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <NavLink className="global-nav-link" key={item.label} to={item.to}>
-                {item.label}
-              </NavLink>
-            ),
-          )}
-
-          {!isOwner ? (
-            <div className="nav-dropdown">
-              <NavLink className="global-nav-link" to={ROUTES.categories}>
-                التصنيفات
-              </NavLink>
-              <div className="dropdown-menu">
-                {categories.length > 0 ? (
-                  categories.map((category) => (
-                    <Link key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
-                      {category.name}
-                    </Link>
-                  ))
-                ) : (
-                  <span>لا توجد تصنيفات</span>
-                )}
-              </div>
-            </div>
-          ) : null}
+          {navItems.map((item) => renderDesktopNavItem(item))}
+          {!isOwner ? <CategoriesDropdown categories={categories} /> : null}
         </nav>
 
         <div className="global-actions">
@@ -131,11 +94,7 @@ export function AppHeader() {
             <button className="icon-button" type="button" aria-label="فتح البحث" onClick={() => setIsSearchOpen((value) => !value)}>
               بحث
             </button>
-            <input
-              value={searchQuery}
-              placeholder="ابحث عن منتج أو تصنيف"
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
+            <input value={searchQuery} placeholder="ابحث عن منتج أو تصنيف" onChange={(event) => setSearchQuery(event.target.value)} />
           </form>
 
           {!isOwner ? (
@@ -145,20 +104,14 @@ export function AppHeader() {
             </button>
           ) : null}
 
-          {isAuthenticated && !isOwner ? (
+          {isAuthenticated || isOwner ? (
             <button className="icon-button" type="button" aria-label="الإشعارات">
               الإشعارات
             </button>
           ) : null}
 
-          {isOwner ? (
-            <button className="icon-button" type="button" aria-label="إشعارات الإدارة">
-              الإشعارات
-            </button>
-          ) : null}
-
           <div className="desktop-auth-actions">
-            {renderAccountActions({ isAuthenticated, isOwner, handleLogout })}
+            <AccountActions isAuthenticated={isAuthenticated} isOwner={isOwner} onLogout={handleLogout} />
           </div>
 
           <button
@@ -175,72 +128,117 @@ export function AppHeader() {
         </div>
       </div>
 
-      <aside className={isMenuOpen ? 'mobile-drawer open' : 'mobile-drawer'} aria-hidden={!isMenuOpen}>
-        <div className="mobile-drawer-header">
-          <Link className="global-logo" to={ROUTES.home} onClick={closeMenu}>
-            <img className="global-logo-image" src={BRAND.logoUrl} alt={BRAND.name} />
-            <span>{BRAND.name}</span>
-          </Link>
-          <button className="text-button" type="button" onClick={closeMenu}>
-            إغلاق
-          </button>
-        </div>
-
+      <div className={isMenuOpen ? 'mobile-dropdown open' : 'mobile-dropdown'} aria-hidden={!isMenuOpen}>
         <form className="mobile-search" onSubmit={handleSearch}>
           <input value={searchQuery} placeholder="ابحث عن منتج أو تصنيف" onChange={(event) => setSearchQuery(event.target.value)} />
           <button className="button button-primary" type="submit">بحث</button>
         </form>
 
         <nav className="mobile-nav" aria-label="قائمة الموبايل">
-          {navItems.map((item) => (
-            <Link key={item.label} to={item.to} onClick={closeMenu}>
-              {item.label}
-            </Link>
-          ))}
-          {!isOwner ? (
-            <>
-              <Link to={ROUTES.categories} onClick={closeMenu}>التصنيفات</Link>
-              {categories.map((category) => (
-                <Link className="mobile-sub-link" key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`} onClick={closeMenu}>
-                  {category.name}
-                </Link>
-              ))}
-              <button type="button" onClick={goToCart}>السلة {cartCount}</button>
-            </>
-          ) : null}
-          {isOwner ? ownerMenuLinks.map((item) => (
-            <Link className="mobile-sub-link" key={item.label} to={item.to} onClick={closeMenu}>
-              {item.label}
-            </Link>
-          )) : customerMenuLinks.map((item) => (
-            isAuthenticated ? (
-              <Link className="mobile-sub-link" key={item.label} to={item.to} onClick={closeMenu}>
-                {item.label}
-              </Link>
-            ) : null
-          ))}
-          {isAuthenticated ? (
-            <button type="button" onClick={handleLogout}>تسجيل الخروج</button>
-          ) : (
-            <div className="mobile-auth-grid">
-              <Link to={ROUTES.login} onClick={closeMenu}>تسجيل الدخول</Link>
-              <Link to={ROUTES.register} onClick={closeMenu}>إنشاء حساب</Link>
-            </div>
-          )}
+          {navItems.map((item) => renderMobileNavItem(item, closeMenu))}
+          {!isOwner ? <MobileCategoriesGroup categories={categories} onClose={closeMenu} /> : null}
+          {!isOwner ? <button type="button" onClick={goToCart}>السلة {cartCount}</button> : null}
+          {isAuthenticated || isOwner ? <button type="button">الإشعارات</button> : null}
+          <MobileAccountLinks isAuthenticated={isAuthenticated} isOwner={isOwner} onClose={closeMenu} onLogout={handleLogout} />
         </nav>
-      </aside>
-      {isMenuOpen ? <button className="drawer-backdrop" type="button" aria-label="إغلاق القائمة" onClick={closeMenu} /> : null}
+      </div>
     </header>
+  );
+}
+
+function renderDesktopNavItem(item: NavItem) {
+  if (!item.children?.length) {
+    return (
+      <NavLink className="global-nav-link" key={item.label} to={item.to}>
+        {item.label}
+      </NavLink>
+    );
+  }
+
+  return (
+    <div className="nav-dropdown" key={item.label}>
+      <NavLink className="global-nav-link" to={item.to}>
+        {item.label}
+      </NavLink>
+      <div className="dropdown-menu">
+        {item.children.map((child) => (
+          <Link key={child.label} to={child.to}>
+            {child.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function renderMobileNavItem(item: NavItem, onClose: () => void) {
+  if (!item.children?.length) {
+    return (
+      <Link key={item.label} to={item.to} onClick={onClose}>
+        {item.label}
+      </Link>
+    );
+  }
+
+  return (
+    <details className="mobile-nav-group" key={item.label}>
+      <summary>{item.label}</summary>
+      <Link to={item.to} onClick={onClose}>{item.label}</Link>
+      {item.children.map((child) => (
+        <Link className="mobile-sub-link" key={child.label} to={child.to} onClick={onClose}>
+          {child.label}
+        </Link>
+      ))}
+    </details>
+  );
+}
+
+function CategoriesDropdown({ categories }: { categories: ProductCategory[] }) {
+  return (
+    <div className="nav-dropdown">
+      <NavLink className="global-nav-link" to={ROUTES.categories}>
+        التصنيفات
+      </NavLink>
+      <div className="dropdown-menu">
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <Link key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
+              {category.name}
+            </Link>
+          ))
+        ) : (
+          <span>لا توجد تصنيفات</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function MobileCategoriesGroup({ categories, onClose }: { categories: ProductCategory[]; onClose: () => void }) {
+  return (
+    <details className="mobile-nav-group">
+      <summary>التصنيفات</summary>
+      <Link to={ROUTES.categories} onClick={onClose}>عرض كل التصنيفات</Link>
+      {categories.length > 0 ? (
+        categories.map((category) => (
+          <Link className="mobile-sub-link" key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`} onClick={onClose}>
+            {category.name}
+          </Link>
+        ))
+      ) : (
+        <span className="mobile-empty-item">لا توجد تصنيفات</span>
+      )}
+    </details>
   );
 }
 
 type AccountActionProps = {
   isAuthenticated: boolean;
   isOwner: boolean;
-  handleLogout: () => void;
+  onLogout: () => void;
 };
 
-function renderAccountActions({ isAuthenticated, isOwner, handleLogout }: AccountActionProps) {
+function AccountActions({ isAuthenticated, isOwner, onLogout }: AccountActionProps) {
   if (!isAuthenticated) {
     return (
       <>
@@ -250,7 +248,7 @@ function renderAccountActions({ isAuthenticated, isOwner, handleLogout }: Accoun
     );
   }
 
-  const links = isOwner ? ownerAccountLinks : customerMenuLinks;
+  const links = isOwner ? ownerAccountLinks : customerAccountLinks;
   const label = isOwner ? 'حساب الإدارة' : 'حسابي';
 
   return (
@@ -260,9 +258,37 @@ function renderAccountActions({ isAuthenticated, isOwner, handleLogout }: Accoun
         {links.map((item) => (
           <Link key={item.label} to={item.to}>{item.label}</Link>
         ))}
-        <button type="button" onClick={handleLogout}>تسجيل الخروج</button>
+        <button type="button" onClick={onLogout}>تسجيل الخروج</button>
       </div>
     </div>
+  );
+}
+
+function MobileAccountLinks({ isAuthenticated, isOwner, onClose, onLogout }: AccountActionProps & { onClose: () => void }) {
+  if (!isAuthenticated) {
+    return (
+      <div className="mobile-auth-grid">
+        <Link to={ROUTES.login} onClick={onClose}>تسجيل الدخول</Link>
+        <Link to={ROUTES.register} onClick={onClose}>إنشاء حساب</Link>
+      </div>
+    );
+  }
+
+  const links = isOwner ? ownerAccountLinks : customerAccountLinks;
+  const label = isOwner ? 'حساب الإدارة' : 'حسابي';
+
+  return (
+    <>
+      <details className="mobile-nav-group">
+        <summary>{label}</summary>
+        {links.map((item) => (
+          <Link className="mobile-sub-link" key={item.label} to={item.to} onClick={onClose}>
+            {item.label}
+          </Link>
+        ))}
+      </details>
+      <button type="button" onClick={onLogout}>تسجيل الخروج</button>
+    </>
   );
 }
 
@@ -316,7 +342,7 @@ const ownerNavItems: NavItem[] = [
   { label: 'التقييمات', to: ROUTES.ownerReviews },
 ];
 
-const customerMenuLinks: NavItem[] = [
+const customerAccountLinks: NavItem[] = [
   { label: 'الملف الشخصي', to: ROUTES.customerProfile },
   { label: 'طلباتي', to: ROUTES.customerOrders },
   { label: 'تقييماتي', to: ROUTES.customerReviews },
@@ -328,12 +354,4 @@ const ownerAccountLinks: NavItem[] = [
   { label: 'إعدادات المتجر', to: ROUTES.ownerSettings },
   { label: 'تغيير كلمة المرور', to: ROUTES.ownerPassword },
   { label: 'عرض المتجر', to: ROUTES.home },
-];
-
-const ownerMenuLinks: NavItem[] = [
-  { label: 'جميع التصنيفات', to: ROUTES.ownerCategories },
-  { label: 'إضافة تصنيف', to: `${ROUTES.ownerCategories}?action=new` },
-  { label: 'ترتيب التصنيفات', to: `${ROUTES.ownerCategories}?action=sort` },
-  { label: 'كل العملاء', to: ROUTES.ownerCustomers },
-  { label: 'كل التقييمات', to: ROUTES.ownerReviews },
 ];
