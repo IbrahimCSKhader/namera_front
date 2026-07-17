@@ -9,13 +9,20 @@ import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPag
 import { AddProductPage } from '../../features/products/admin/pages/AddProductPage';
 import { EditProductPage } from '../../features/products/admin/pages/EditProductPage';
 import { ProductsManagementPage } from '../../features/products/admin/pages/ProductsManagementPage';
+import { ProductsPage } from '../../features/products/pages/ProductsPage';
 import { HomePage } from '../../features/public/pages/HomePage';
+import { StaticPage } from '../../features/public/pages/StaticPage';
 import { ROUTES } from '../../shared/constants/routes';
 
 export function AppRouter() {
   return (
     <Routes>
       <Route path={ROUTES.home} element={<HomePage />} />
+      <Route path={ROUTES.products} element={<ProductsPage />} />
+      <Route path={ROUTES.categories} element={<ProductsPage />} />
+      <Route path={ROUTES.about} element={<StaticPage title="من نحن" subtitle="Namira متجر هدايا يدوية يهتم بالتفاصيل والتخصيص." />} />
+      <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />
+      <Route path={ROUTES.cart} element={<StaticPage title="السلة" subtitle="يمكن للزائر الاحتفاظ بالسلة مؤقتا. عند إتمام الطلب يجب تسجيل الدخول أو إنشاء حساب لإكمال الطلب." />} />
       <Route path={ROUTES.login} element={<LoginPage />} />
       <Route path={ROUTES.register} element={<RegisterPage />} />
       <Route
@@ -31,6 +38,30 @@ export function AppRouter() {
         element={
           <CustomerRoute>
             <CustomerProfilePage />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.customerOrders}
+        element={
+          <CustomerRoute>
+            <StaticPage title="طلباتي" subtitle="ستعرض هذه الصفحة الطلبات الحالية والسابقة وحالة كل طلب وتفاصيله." />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.customerReviews}
+        element={
+          <CustomerRoute>
+            <StaticPage title="تقييماتي" subtitle="ستعرض هذه الصفحة التقييمات التي كتبها الزبون مع خيارات التعديل أو الحذف حسب سياسة المتجر." />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.customerAddresses}
+        element={
+          <CustomerRoute>
+            <StaticPage title="العناوين" subtitle="يمكن استخدام هذه الصفحة لإدارة عناوين التوصيل عند دعم أكثر من عنوان." />
           </CustomerRoute>
         }
       />
@@ -51,10 +82,66 @@ export function AppRouter() {
         }
       />
       <Route
+        path={ROUTES.ownerOrders}
+        element={
+          <OwnerRoute>
+            <StaticPage title="الطلبات" subtitle="ستعرض هذه الصفحة جميع الطلبات وحالاتها: جديدة، قيد التجهيز، جاهزة، مشحونة، مكتملة، أو ملغاة." />
+          </OwnerRoute>
+        }
+      />
+      <Route
         path={ROUTES.ownerAddProduct}
         element={
           <OwnerRoute>
             <AddProductPage />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerCategories}
+        element={
+          <OwnerRoute>
+            <StaticPage title="التصنيفات" subtitle="ستعرض هذه الصفحة إدارة التصنيفات، إضافة تصنيف، وترتيب التصنيفات." />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerCustomers}
+        element={
+          <OwnerRoute>
+            <StaticPage title="العملاء" subtitle="ستعرض هذه الصفحة قائمة العملاء ومعلومات الاتصال وعدد الطلبات وحالة الحساب." />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerReviews}
+        element={
+          <OwnerRoute>
+            <StaticPage title="التقييمات" subtitle="ستعرض هذه الصفحة جميع التقييمات الجديدة والمخفية وخيارات إدارة التقييمات." />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerProfile}
+        element={
+          <OwnerRoute>
+            <StaticPage title="الملف الشخصي" subtitle="صفحة بيانات حساب الإدارة." />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerSettings}
+        element={
+          <OwnerRoute>
+            <StaticPage title="إعدادات المتجر" subtitle="صفحة إعدادات المتجر العامة." />
+          </OwnerRoute>
+        }
+      />
+      <Route
+        path={ROUTES.ownerPassword}
+        element={
+          <OwnerRoute>
+            <StaticPage title="تغيير كلمة المرور" subtitle="صفحة تغيير كلمة مرور حساب الإدارة." />
           </OwnerRoute>
         }
       />
