@@ -7,7 +7,9 @@ type RequestOptions = {
   requiresAuth?: boolean;
 };
 
-export const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5074/api';
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5074/api';
+
+export const apiBaseUrl = getApiBaseUrl();
 
 export async function apiClient<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const token = getToken();
@@ -44,4 +46,25 @@ export async function apiClient<T>(path: string, options: RequestOptions = {}): 
   }
 
   return payload;
+}
+
+function getApiBaseUrl(): string {
+  if (typeof window === 'undefined') {
+    return configuredApiBaseUrl;
+  }
+
+  try {
+    const apiUrl = new URL(configuredApiBaseUrl);
+    const pageHost = window.location.hostname;
+    const apiHostIsLoopback = apiUrl.hostname === '127.0.0.1' || apiUrl.hostname === 'localhost';
+    const pageHostIsLoopback = pageHost === '127.0.0.1' || pageHost === 'localhost';
+
+    if (apiHostIsLoopback && !pageHostIsLoopback) {
+      apiUrl.hostname = pageHost;
+    }
+
+    return apiUrl.toString().replace(/\/$/, '');
+  } catch {
+    return configuredApiBaseUrl;
+  }
 }
