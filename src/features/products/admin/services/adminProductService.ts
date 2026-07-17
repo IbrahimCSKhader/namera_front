@@ -9,7 +9,7 @@ import {
   type ProductOptionGroupDraft,
   type ProductOptionValueDraft,
 } from '../types/productAdminTypes';
-import { createEmptyProductDraft, createId, getPriceLabel } from '../utils/productDraft';
+import { createEmptyProductDraft, createGuid, createId, getPriceLabel } from '../utils/productDraft';
 
 type AdminProductListItemResponse = {
   id: string;
@@ -126,7 +126,7 @@ export async function createAdminCategory(name: string): Promise<ProductCategory
 export async function createAdminCategoryWithImage(
   name: string,
   imageUrl = '',
-  categoryId = crypto.randomUUID(),
+  categoryId = createGuid(),
 ): Promise<ProductCategory> {
   const response = await apiClient<ApiResponse<ProductCategory>>('/admin/products/categories', {
     method: 'POST',

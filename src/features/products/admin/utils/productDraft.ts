@@ -205,7 +205,7 @@ export function createId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
 }
 
-function createGuid(): string {
+export function createGuid(): string {
   if (globalThis.crypto?.randomUUID) {
     return globalThis.crypto.randomUUID();
   }

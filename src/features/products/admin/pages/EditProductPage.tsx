@@ -13,7 +13,7 @@ import {
   uploadAdminProductImage,
 } from '../services/adminProductService';
 import { type ProductDraft, type ProductFieldErrors } from '../types/productAdminTypes';
-import { createEmptyProductDraft, normalizeProductDraft } from '../utils/productDraft';
+import { createEmptyProductDraft, createGuid, normalizeProductDraft } from '../utils/productDraft';
 import { validateProductDraft } from '../utils/productValidation';
 
 export function EditProductPage() {
@@ -42,7 +42,7 @@ export function EditProductPage() {
   }
 
   async function handleCreateCategory(name: string, imageFile?: File | null) {
-    const categoryId = crypto.randomUUID();
+    const categoryId = createGuid();
     const uploadedImage = imageFile ? await uploadAdminCategoryImage(categoryId, imageFile) : null;
     const category = await createAdminCategoryWithImage(name, uploadedImage?.url ?? '', categoryId);
     setCategories((current) => [...current, category]);
