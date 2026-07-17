@@ -1,24 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
 
 :root {
-  --color-primary: #d48c70;
-  --color-primary-dark: #8a4f37;
-  --color-primary-light: #ffb599;
-  --color-primary-soft: #ffdbce;
-  --color-background: #fcf9f8;
-  --color-surface: #f0eded;
+  --color-primary: #f05ca8;
+  --color-primary-dark: #aa2f72;
+  --color-primary-light: #ff93c9;
+  --color-primary-soft: #ffe3f1;
+  --color-background: #fff7fb;
+  --color-surface: #fff0f7;
   --color-surface-strong: #ffffff;
-  --color-text: #1b1c1c;
-  --color-text-muted: #53433e;
-  --color-border: #85736d;
-  --color-border-soft: #d8c2bb;
+  --color-text: #241821;
+  --color-text-muted: #6b4a5d;
+  --color-border: #b985a2;
+  --color-border-soft: #f1bfd7;
   --color-error: #ba1a1a;
   --color-success: #20744a;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
-  --shadow-soft: 0 8px 30px rgba(42, 31, 38, 0.08);
-  --shadow-warm: 0 14px 40px rgba(212, 140, 112, 0.12);
+  --shadow-soft: 0 8px 30px rgba(89, 37, 67, 0.08);
+  --shadow-warm: 0 14px 40px rgba(240, 92, 168, 0.15);
   --container-max: 1280px;
   --font-family: 'Cairo', 'Tajawal', 'Be Vietnam Pro', 'Segoe UI', sans-serif;
   --font-display: 'Cairo', 'Tajawal', 'Be Vietnam Pro', sans-serif;

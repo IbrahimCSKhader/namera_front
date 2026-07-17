@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { BRAND } from '../../../shared/constants/brand';
 import { ROUTES } from '../../../shared/constants/routes';
 import { ProductCard } from '../../products/components/ProductCard';
 import * as productApi from '../../products/services/productApi';
@@ -30,9 +31,13 @@ export function HomePage() {
 
   return (
     <main className="shop-page" id="products">
+      <section className="store-cover" aria-label={BRAND.name}>
+        <img src={BRAND.coverUrl} alt={`${BRAND.name} cover`} />
+      </section>
+
       <section className="page-heading shop-heading">
-        <p className="eyebrow">Namira</p>
-        <h1>هدايا يدوية بتفاصيل دافئة</h1>
+        <p className="eyebrow">{BRAND.name}</p>
+        <h1>{BRAND.tagline}</h1>
         <p>واجهة المتجر تعرض فقط البيانات المحفوظة في قاعدة البيانات.</p>
       </section>
 

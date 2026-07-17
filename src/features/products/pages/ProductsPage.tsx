@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import * as productApi from '../services/productApi';
 import { type Product, type ProductCategory } from '../types/productTypes';
+import { BRAND } from '../../../shared/constants/brand';
 
 export function ProductsPage() {
   const [searchParams] = useSearchParams();
@@ -49,7 +50,7 @@ export function ProductsPage() {
   return (
     <main className="shop-page">
       <section className="page-heading shop-heading">
-        <p className="eyebrow">Namira</p>
+        <p className="eyebrow">{BRAND.name}</p>
         <h1>{activeCategory ? activeCategory.name : 'المنتجات'}</h1>
         <p>تظهر هنا المنتجات المخزنة في قاعدة البيانات فقط.</p>
       </section>

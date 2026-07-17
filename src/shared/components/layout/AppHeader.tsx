@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../features/authentication/hooks/useAuth';
 import * as productApi from '../../../features/products/services/productApi';
 import { type ProductCategory } from '../../../features/products/types/productTypes';
+import { BRAND } from '../../constants/brand';
 import { ROUTES } from '../../constants/routes';
 
 const guestCartKey = 'namira_guest_cart';
@@ -79,8 +80,8 @@ export function AppHeader() {
     <header className="global-header">
       <div className="global-header-inner">
         <Link className="global-logo" to={ROUTES.home} onClick={closeMenu}>
-          <span className="global-logo-mark">N</span>
-          <span>Namira</span>
+          <img className="global-logo-image" src={BRAND.logoUrl} alt={BRAND.name} />
+          <span>{BRAND.name}</span>
         </Link>
 
         <nav className="global-nav desktop-nav" aria-label="التنقل الرئيسي">
@@ -177,8 +178,8 @@ export function AppHeader() {
       <aside className={isMenuOpen ? 'mobile-drawer open' : 'mobile-drawer'} aria-hidden={!isMenuOpen}>
         <div className="mobile-drawer-header">
           <Link className="global-logo" to={ROUTES.home} onClick={closeMenu}>
-            <span className="global-logo-mark">N</span>
-            <span>Namira</span>
+            <img className="global-logo-image" src={BRAND.logoUrl} alt={BRAND.name} />
+            <span>{BRAND.name}</span>
           </Link>
           <button className="text-button" type="button" onClick={closeMenu}>
             إغلاق

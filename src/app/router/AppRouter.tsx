@@ -12,6 +12,7 @@ import { ProductsManagementPage } from '../../features/products/admin/pages/Prod
 import { ProductsPage } from '../../features/products/pages/ProductsPage';
 import { HomePage } from '../../features/public/pages/HomePage';
 import { StaticPage } from '../../features/public/pages/StaticPage';
+import { BRAND } from '../../shared/constants/brand';
 import { ROUTES } from '../../shared/constants/routes';
 
 export function AppRouter() {
@@ -20,7 +21,7 @@ export function AppRouter() {
       <Route path={ROUTES.home} element={<HomePage />} />
       <Route path={ROUTES.products} element={<ProductsPage />} />
       <Route path={ROUTES.categories} element={<ProductsPage />} />
-      <Route path={ROUTES.about} element={<StaticPage title="من نحن" subtitle="Namira متجر هدايا يدوية يهتم بالتفاصيل والتخصيص." />} />
+      <Route path={ROUTES.about} element={<StaticPage title="من نحن" subtitle={`${BRAND.name} متجر هدايا يدوية يهتم بالتفاصيل والتخصيص.`} />} />
       <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />
       <Route path={ROUTES.cart} element={<StaticPage title="السلة" subtitle="يمكن للزائر الاحتفاظ بالسلة مؤقتا. عند إتمام الطلب يجب تسجيل الدخول أو إنشاء حساب لإكمال الطلب." />} />
       <Route path={ROUTES.login} element={<LoginPage />} />

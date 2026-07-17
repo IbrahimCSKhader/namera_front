@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../authentication/hooks/useAuth';
 import { CustomerLayout } from '../../../shared/components/layout/CustomerLayout';
+import { BRAND } from '../../../shared/constants/brand';
 import { ROUTES } from '../../../shared/constants/routes';
 
 export function CustomerDashboardPage() {
@@ -12,7 +13,7 @@ export function CustomerDashboardPage() {
         <div>
           <p className="eyebrow">لوحة الزبون</p>
           <h2>أهلًا {user?.firstName}، حسابك جاهز</h2>
-          <p>من هنا ستتابع الطلبات، العنوان، وتفاصيل حسابك في متجر Namira.</p>
+          <p>من هنا ستتابع الطلبات، العنوان، وتفاصيل حسابك في متجر {BRAND.name}.</p>
         </div>
         <Link className="button button-primary" to={ROUTES.customerProfile}>
           تعديل الملف الشخصي
