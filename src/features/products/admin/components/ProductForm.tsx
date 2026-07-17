@@ -37,7 +37,9 @@ export function ProductForm({
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
   const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
   const pricing = useMemo(() => calculateProductPricingSummary(draft), [draft]);
+  const isMediaBusy = isCreatingCategory || uploadingImageId !== null;
 
   function update<K extends keyof ProductDraft>(key: K, value: ProductDraft[K]) {
     onChange({ ...draft, [key]: value });
@@ -77,7 +79,14 @@ export function ProductForm({
         onNewCategoryNameChange={setNewCategoryName}
         update={update}
       />
-      <ImagesSection draft={draft} errors={errors} onChange={onChange} onUploadProductImage={onUploadProductImage} />
+      <ImagesSection
+        draft={draft}
+        errors={errors}
+        uploadingImageId={uploadingImageId}
+        onChange={onChange}
+        onUploadProductImage={onUploadProductImage}
+        onUploadingImageChange={setUploadingImageId}
+      />
       <PricingSection draft={draft} pricingLabel={pricing.priceLabel} update={update} />
       <OptionsSection draft={draft} onChange={onChange} />
       <CustomizationSection draft={draft} onChange={onChange} />
@@ -92,8 +101,8 @@ export function ProductForm({
       ) : null}
 
       <div className="form-actions">
-        <button className="button button-primary" type="submit" disabled={isSaving}>
-          {isSaving ? 'جار الحفظ...' : submitLabel}
+        <button className="button button-primary" type="submit" disabled={isSaving || isMediaBusy}>
+          {uploadingImageId ? 'انتظري اكتمال رفع الصورة...' : isSaving ? 'جار الحفظ...' : submitLabel}
         </button>
       </div>
     </form>
@@ -185,11 +194,16 @@ function BasicInfoSection({
 function ImagesSection({
   draft,
   errors,
+  uploadingImageId,
   onChange,
   onUploadProductImage,
-}: SectionProps & { onChange: (draft: ProductDraft) => void; onUploadProductImage: (file: File) => Promise<string> }) {
-  const [uploadingImageId, setUploadingImageId] = useState<string | null>(null);
-
+  onUploadingImageChange,
+}: SectionProps & {
+  onChange: (draft: ProductDraft) => void;
+  onUploadProductImage: (file: File) => Promise<string>;
+  onUploadingImageChange: (imageId: string | null) => void;
+  uploadingImageId: string | null;
+}) {
   function updateImage(index: number, image: ProductImageDraft) {
     const images = draft.images.map((item, itemIndex) => (itemIndex === index ? image : item));
     onChange({ ...draft, images });
@@ -208,7 +222,7 @@ function ImagesSection({
       return;
     }
 
-    setUploadingImageId(image.id);
+    onUploadingImageChange(image.id);
     try {
       const imageUrl = await onUploadProductImage(file);
       updateImage(index, {
@@ -218,7 +232,7 @@ function ImagesSection({
         fileName: file.name,
       });
     } finally {
-      setUploadingImageId(null);
+      onUploadingImageChange(null);
     }
   }
 
