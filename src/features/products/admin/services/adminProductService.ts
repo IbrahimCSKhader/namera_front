@@ -57,6 +57,24 @@ export type ProductListFilters = {
   lowStockOnly?: boolean;
 };
 
+export type AdminProductCategory = ProductCategory & {
+  isActive: boolean;
+  displayOrder: number;
+  productsCount: number;
+  visibleProductsCount: number;
+  createdAt: string;
+  updatedAt: string | null;
+};
+
+export type ProductCategoryDraft = {
+  name: string;
+  slug: string;
+  description: string;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+};
+
 export async function getAdminProducts(filters: ProductListFilters = {}): Promise<ProductListItem[]> {
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
@@ -119,6 +137,11 @@ export async function publishAdminProduct(id: string, publish: boolean): Promise
   });
 }
 
+export async function getAdminCategories(): Promise<AdminProductCategory[]> {
+  const response = await apiClient<ApiResponse<AdminProductCategory[]>>('/admin/products/categories');
+  return response.data ?? [];
+}
+
 export async function createAdminCategory(name: string): Promise<ProductCategory> {
   return createAdminCategoryWithImage(name);
 }
@@ -127,6 +150,7 @@ export async function createAdminCategoryWithImage(
   name: string,
   imageUrl = '',
   categoryId = createGuid(),
+  displayOrder?: number,
 ): Promise<ProductCategory> {
   const response = await apiClient<ApiResponse<ProductCategory>>('/admin/products/categories', {
     method: 'POST',
@@ -134,11 +158,45 @@ export async function createAdminCategoryWithImage(
       clientId: categoryId,
       name,
       imageUrl: imageUrl || undefined,
+      displayOrder,
     },
   });
 
   if (!response.data) {
     throw new Error('لم يتم إنشاء التصنيف');
+  }
+
+  return response.data;
+}
+
+export async function updateAdminCategory(id: string, draft: ProductCategoryDraft): Promise<AdminProductCategory> {
+  const response = await apiClient<ApiResponse<AdminProductCategory>>(`/admin/products/categories/${id}`, {
+    method: 'PUT',
+    body: {
+      name: draft.name,
+      slug: draft.slug || undefined,
+      description: draft.description || undefined,
+      imageUrl: draft.imageUrl || undefined,
+      displayOrder: draft.displayOrder,
+      isActive: draft.isActive,
+    },
+  });
+
+  if (!response.data) {
+    throw new Error('لم يتم تحديث التصنيف');
+  }
+
+  return response.data;
+}
+
+export async function setAdminCategoryActive(id: string, active: boolean): Promise<AdminProductCategory> {
+  const response = await apiClient<ApiResponse<AdminProductCategory>>(
+    `/admin/products/categories/${id}/active?active=${active}`,
+    { method: 'PATCH' },
+  );
+
+  if (!response.data) {
+    throw new Error('لم يتم تحديث حالة التصنيف');
   }
 
   return response.data;

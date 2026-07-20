@@ -7,12 +7,13 @@ import { CustomerDashboardPage } from '../../features/customer/pages/CustomerDas
 import { CustomerProfilePage } from '../../features/customer/pages/CustomerProfilePage';
 import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPage';
 import { AddProductPage } from '../../features/products/admin/pages/AddProductPage';
+import { CategoriesManagementPage } from '../../features/products/admin/pages/CategoriesManagementPage';
 import { EditProductPage } from '../../features/products/admin/pages/EditProductPage';
 import { ProductsManagementPage } from '../../features/products/admin/pages/ProductsManagementPage';
 import { ProductsPage } from '../../features/products/pages/ProductsPage';
+import { AboutPage } from '../../features/public/pages/AboutPage';
 import { HomePage } from '../../features/public/pages/HomePage';
 import { StaticPage } from '../../features/public/pages/StaticPage';
-import { BRAND } from '../../shared/constants/brand';
 import { ROUTES } from '../../shared/constants/routes';
 
 export function AppRouter() {
@@ -21,7 +22,7 @@ export function AppRouter() {
       <Route path={ROUTES.home} element={<HomePage />} />
       <Route path={ROUTES.products} element={<ProductsPage />} />
       <Route path={ROUTES.categories} element={<ProductsPage />} />
-      <Route path={ROUTES.about} element={<StaticPage title="من نحن" subtitle={`${BRAND.name} متجر هدايا يدوية يهتم بالتفاصيل والتخصيص.`} />} />
+      <Route path={ROUTES.about} element={<AboutPage />} />
       <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />
       <Route path={ROUTES.cart} element={<StaticPage title="السلة" subtitle="يمكن للزائر الاحتفاظ بالسلة مؤقتا. عند إتمام الطلب يجب تسجيل الدخول أو إنشاء حساب لإكمال الطلب." />} />
       <Route path={ROUTES.login} element={<LoginPage />} />
@@ -102,7 +103,7 @@ export function AppRouter() {
         path={ROUTES.ownerCategories}
         element={
           <OwnerRoute>
-            <StaticPage title="التصنيفات" subtitle="ستعرض هذه الصفحة إدارة التصنيفات، إضافة تصنيف، وترتيب التصنيفات." />
+            <CategoriesManagementPage />
           </OwnerRoute>
         }
       />
