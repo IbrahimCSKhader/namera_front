@@ -2097,6 +2097,10 @@ img {
   font-weight: 800;
 }
 
+.owner-account-form {
+  max-width: 860px;
+}
+
 .shop-bottom-nav {
   position: fixed;
   right: 50%;

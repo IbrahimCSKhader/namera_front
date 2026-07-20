@@ -8,6 +8,10 @@ import { CustomerDashboardPage } from '../../features/customer/pages/CustomerDas
 import { CustomerProfilePage } from '../../features/customer/pages/CustomerProfilePage';
 import { CustomerReviewsPage } from '../../features/customer/pages/CustomerReviewsPage';
 import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPage';
+import { OwnerPasswordPage } from '../../features/owner/pages/OwnerPasswordPage';
+import { OwnerProfilePage } from '../../features/owner/pages/OwnerProfilePage';
+import { OwnerReviewsPage } from '../../features/owner/pages/OwnerReviewsPage';
+import { OwnerSettingsPage } from '../../features/owner/pages/OwnerSettingsPage';
 import { CartPage } from '../../features/orders/pages/CartPage';
 import { CustomerOrdersPage } from '../../features/orders/pages/CustomerOrdersPage';
 import { OwnerCustomersPage } from '../../features/orders/pages/OwnerCustomersPage';
@@ -125,7 +129,7 @@ export function AppRouter() {
         path={ROUTES.ownerReviews}
         element={
           <OwnerRoute>
-            <StaticPage title="التقييمات" subtitle="ستعرض هذه الصفحة جميع التقييمات الجديدة والمخفية وخيارات إدارة التقييمات." />
+            <OwnerReviewsPage />
           </OwnerRoute>
         }
       />
@@ -133,7 +137,7 @@ export function AppRouter() {
         path={ROUTES.ownerProfile}
         element={
           <OwnerRoute>
-            <StaticPage title="الملف الشخصي" subtitle="صفحة بيانات حساب الإدارة." />
+            <OwnerProfilePage />
           </OwnerRoute>
         }
       />
@@ -141,7 +145,7 @@ export function AppRouter() {
         path={ROUTES.ownerSettings}
         element={
           <OwnerRoute>
-            <StaticPage title="إعدادات المتجر" subtitle="صفحة إعدادات المتجر العامة." />
+            <OwnerSettingsPage />
           </OwnerRoute>
         }
       />
@@ -149,7 +153,7 @@ export function AppRouter() {
         path={ROUTES.ownerPassword}
         element={
           <OwnerRoute>
-            <StaticPage title="تغيير كلمة المرور" subtitle="صفحة تغيير كلمة مرور حساب الإدارة." />
+            <OwnerPasswordPage />
           </OwnerRoute>
         }
       />
