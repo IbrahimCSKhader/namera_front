@@ -1,12 +1,11 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../features/authentication/hooks/useAuth';
+import { getCartCount } from '../../../features/orders/utils/cartStorage';
 import * as productApi from '../../../features/products/services/productApi';
 import { type ProductCategory } from '../../../features/products/types/productTypes';
 import { BRAND } from '../../constants/brand';
 import { ROUTES } from '../../constants/routes';
-
-const guestCartKey = 'resin_bon_guest_cart';
 
 type NavItem = {
   label: string;
@@ -21,7 +20,7 @@ export function AppHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartCount, setCartCount] = useState(() => readGuestCartCount());
+  const [cartCount, setCartCount] = useState(() => getCartCount());
 
   const isOwner = user?.role === 'Owner';
   const navItems = useMemo(() => (isOwner ? ownerNavItems : storeNavItems), [isOwner]);
@@ -41,7 +40,7 @@ export function AppHeader() {
 
   useEffect(() => {
     function syncCartCount() {
-      setCartCount(readGuestCartCount());
+      setCartCount(getCartCount());
     }
 
     window.addEventListener('storage', syncCartCount);
@@ -292,17 +291,6 @@ function MobileAccountLinks({ isAuthenticated, isOwner, onClose, onLogout }: Acc
   );
 }
 
-function readGuestCartCount() {
-  try {
-    const rawCart = window.localStorage.getItem(guestCartKey);
-    if (!rawCart) return 0;
-    const parsed = JSON.parse(rawCart) as Array<{ quantity?: number }>;
-    return parsed.reduce((total, item) => total + (Number(item.quantity) || 1), 0);
-  } catch {
-    return 0;
-  }
-}
-
 const storeNavItems: NavItem[] = [
   { label: 'الرئيسية', to: ROUTES.home },
   { label: 'المنتجات', to: ROUTES.products },
@@ -329,8 +317,8 @@ const ownerNavItems: NavItem[] = [
     to: ROUTES.ownerOrders,
     children: [
       { label: 'جميع الطلبات', to: ROUTES.ownerOrders },
-      { label: 'طلبات جديدة', to: `${ROUTES.ownerOrders}?status=new` },
-      { label: 'قيد التجهيز', to: `${ROUTES.ownerOrders}?status=processing` },
+      { label: 'طلبات جديدة', to: `${ROUTES.ownerOrders}?status=pending` },
+      { label: 'قيد التجهيز', to: `${ROUTES.ownerOrders}?status=preparing` },
       { label: 'جاهزة للتسليم', to: `${ROUTES.ownerOrders}?status=ready` },
       { label: 'تم شحنها', to: `${ROUTES.ownerOrders}?status=shipped` },
       { label: 'مكتملة', to: `${ROUTES.ownerOrders}?status=completed` },

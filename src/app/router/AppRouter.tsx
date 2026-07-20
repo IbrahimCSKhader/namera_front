@@ -6,6 +6,10 @@ import { OwnerRoute } from '../../features/authentication/routes/OwnerRoute';
 import { CustomerDashboardPage } from '../../features/customer/pages/CustomerDashboardPage';
 import { CustomerProfilePage } from '../../features/customer/pages/CustomerProfilePage';
 import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPage';
+import { CartPage } from '../../features/orders/pages/CartPage';
+import { CustomerOrdersPage } from '../../features/orders/pages/CustomerOrdersPage';
+import { OwnerCustomersPage } from '../../features/orders/pages/OwnerCustomersPage';
+import { OwnerOrdersPage } from '../../features/orders/pages/OwnerOrdersPage';
 import { AddProductPage } from '../../features/products/admin/pages/AddProductPage';
 import { CategoriesManagementPage } from '../../features/products/admin/pages/CategoriesManagementPage';
 import { EditProductPage } from '../../features/products/admin/pages/EditProductPage';
@@ -24,7 +28,7 @@ export function AppRouter() {
       <Route path={ROUTES.categories} element={<ProductsPage />} />
       <Route path={ROUTES.about} element={<AboutPage />} />
       <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />
-      <Route path={ROUTES.cart} element={<StaticPage title="السلة" subtitle="يمكن للزائر الاحتفاظ بالسلة مؤقتا. عند إتمام الطلب يجب تسجيل الدخول أو إنشاء حساب لإكمال الطلب." />} />
+      <Route path={ROUTES.cart} element={<CartPage />} />
       <Route path={ROUTES.login} element={<LoginPage />} />
       <Route path={ROUTES.register} element={<RegisterPage />} />
       <Route
@@ -47,7 +51,7 @@ export function AppRouter() {
         path={ROUTES.customerOrders}
         element={
           <CustomerRoute>
-            <StaticPage title="طلباتي" subtitle="ستعرض هذه الصفحة الطلبات الحالية والسابقة وحالة كل طلب وتفاصيله." />
+            <CustomerOrdersPage />
           </CustomerRoute>
         }
       />
@@ -87,7 +91,7 @@ export function AppRouter() {
         path={ROUTES.ownerOrders}
         element={
           <OwnerRoute>
-            <StaticPage title="الطلبات" subtitle="ستعرض هذه الصفحة جميع الطلبات وحالاتها: جديدة، قيد التجهيز، جاهزة، مشحونة، مكتملة، أو ملغاة." />
+            <OwnerOrdersPage />
           </OwnerRoute>
         }
       />
@@ -111,7 +115,7 @@ export function AppRouter() {
         path={ROUTES.ownerCustomers}
         element={
           <OwnerRoute>
-            <StaticPage title="العملاء" subtitle="ستعرض هذه الصفحة قائمة العملاء ومعلومات الاتصال وعدد الطلبات وحالة الحساب." />
+            <OwnerCustomersPage />
           </OwnerRoute>
         }
       />
