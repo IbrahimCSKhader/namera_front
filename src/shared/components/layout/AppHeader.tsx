@@ -111,6 +111,11 @@ export function AppHeader() {
 
           <div className="desktop-auth-actions">
             <AccountActions isAuthenticated={isAuthenticated} isOwner={isOwner} onLogout={handleLogout} />
+            {isAuthenticated ? (
+              <button className="nav-action logout-action" type="button" onClick={handleLogout}>
+                تسجيل الخروج
+              </button>
+            ) : null}
           </div>
 
           <button

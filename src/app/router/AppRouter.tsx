@@ -3,8 +3,10 @@ import { LoginPage } from '../../features/authentication/pages/LoginPage';
 import { RegisterPage } from '../../features/authentication/pages/RegisterPage';
 import { CustomerRoute } from '../../features/authentication/routes/CustomerRoute';
 import { OwnerRoute } from '../../features/authentication/routes/OwnerRoute';
+import { CustomerAddressesPage } from '../../features/customer/pages/CustomerAddressesPage';
 import { CustomerDashboardPage } from '../../features/customer/pages/CustomerDashboardPage';
 import { CustomerProfilePage } from '../../features/customer/pages/CustomerProfilePage';
+import { CustomerReviewsPage } from '../../features/customer/pages/CustomerReviewsPage';
 import { OwnerDashboardPage } from '../../features/owner/pages/OwnerDashboardPage';
 import { CartPage } from '../../features/orders/pages/CartPage';
 import { CustomerOrdersPage } from '../../features/orders/pages/CustomerOrdersPage';
@@ -59,7 +61,7 @@ export function AppRouter() {
         path={ROUTES.customerReviews}
         element={
           <CustomerRoute>
-            <StaticPage title="تقييماتي" subtitle="ستعرض هذه الصفحة التقييمات التي كتبها الزبون مع خيارات التعديل أو الحذف حسب سياسة المتجر." />
+            <CustomerReviewsPage />
           </CustomerRoute>
         }
       />
@@ -67,7 +69,7 @@ export function AppRouter() {
         path={ROUTES.customerAddresses}
         element={
           <CustomerRoute>
-            <StaticPage title="العناوين" subtitle="يمكن استخدام هذه الصفحة لإدارة عناوين التوصيل عند دعم أكثر من عنوان." />
+            <CustomerAddressesPage />
           </CustomerRoute>
         }
       />

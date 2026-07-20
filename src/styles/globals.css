@@ -404,6 +404,13 @@ img {
   background: var(--color-primary);
 }
 
+.nav-action.logout-action {
+  color: var(--color-error);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(199, 68, 82, 0.22);
+  cursor: pointer;
+}
+
 .hero-section {
   display: grid;
   width: min(100%, var(--container-max));
@@ -1984,6 +1991,112 @@ img {
   border-radius: 12px 12px 4px 4px;
 }
 
+.customer-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.customer-quick-actions a,
+.customer-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(216, 194, 187, 0.62);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.customer-quick-actions a {
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--color-primary-dark);
+  text-align: center;
+  font-weight: 800;
+}
+
+.customer-management-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.customer-panel {
+  padding: 22px;
+}
+
+.customer-panel h3 {
+  margin: 0 0 12px;
+}
+
+.customer-card-list {
+  display: grid;
+  gap: 12px;
+}
+
+.customer-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: var(--color-surface-strong);
+  border: 1px solid rgba(216, 194, 187, 0.42);
+  border-radius: var(--radius-md);
+}
+
+.customer-card header,
+.review-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.customer-card h3,
+.customer-card p {
+  margin: 0;
+}
+
+.customer-card p,
+.customer-card small {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.review-card header {
+  justify-content: flex-start;
+}
+
+.review-card img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.review-card header p {
+  color: #b57909;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.last-order-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.last-order-panel p {
+  margin: 0;
+  color: var(--color-primary-dark);
+  font-size: 24px;
+  font-weight: 800;
+}
+
 .shop-bottom-nav {
   position: fixed;
   right: 50%;
@@ -2313,6 +2426,8 @@ img {
   .steps-grid,
   .dashboard-grid,
   .dashboard-charts,
+  .customer-quick-actions,
+  .customer-management-grid,
   .owner-stats,
   .toggle-grid,
   .image-editor-grid,
@@ -2510,6 +2625,12 @@ img {
 
   .column-chart {
     overflow-x: auto;
+  }
+
+  .customer-card header,
+  .last-order-panel {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .about-page {
