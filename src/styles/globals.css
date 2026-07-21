@@ -1797,7 +1797,10 @@ img {
 }
 
 .shop-add-button {
+  display: inline-flex;
   min-height: 42px;
+  align-items: center;
+  justify-content: center;
   margin-top: 8px;
   color: white;
   background: var(--color-primary-dark);
@@ -1811,6 +1814,259 @@ img {
   color: var(--color-text-muted);
   background: #e7dfdd;
   cursor: not-allowed;
+}
+
+.product-details-page {
+  padding-bottom: 96px;
+}
+
+.product-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 18px;
+  color: var(--color-text-muted);
+  font-weight: 800;
+}
+
+.product-breadcrumb a {
+  color: var(--color-primary-dark);
+}
+
+.product-details-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.92fr) minmax(340px, 1.08fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.product-gallery,
+.product-details-panel,
+.product-review-section {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(216, 194, 187, 0.62);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.product-gallery {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.product-main-image {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.product-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 10px;
+}
+
+.product-thumbs button {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  padding: 0;
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.product-thumbs button.active {
+  border-color: var(--color-primary);
+}
+
+.product-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-details-panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.product-details-panel > small {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.product-details-panel h1,
+.product-review-section h2 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.product-details-panel h1 {
+  font-size: clamp(30px, 5vw, 48px);
+}
+
+.product-details-panel p {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.9;
+}
+
+.product-detail-price {
+  color: var(--color-primary-dark);
+  font-size: 28px;
+}
+
+.product-prep-note {
+  padding: 12px 14px;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  font-weight: 800;
+}
+
+.product-choice-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.product-choice-group {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid rgba(216, 194, 187, 0.55);
+  border-radius: var(--radius-md);
+}
+
+.product-choice-group legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.product-choice-group legend span,
+.product-custom-field b {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--color-primary-dark);
+  background: var(--color-primary-soft);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.choice-pill {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: var(--color-primary-dark);
+  background: white;
+  border: 1px solid var(--color-border-soft);
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.choice-pill.active {
+  color: white;
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.choice-pill input {
+  accent-color: var(--color-primary);
+}
+
+.choice-pill small {
+  color: inherit;
+}
+
+.product-custom-field > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.product-custom-field > small {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.checkbox-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  color: var(--color-primary-dark);
+  font-weight: 800;
+}
+
+.checkbox-line input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary);
+}
+
+.product-purchase-box {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(255, 219, 206, 0.3);
+  border: 1px solid rgba(216, 194, 187, 0.55);
+  border-radius: var(--radius-md);
+}
+
+.product-purchase-box > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.product-purchase-box span {
+  color: var(--color-text-muted);
+  font-weight: 800;
+}
+
+.product-purchase-box strong {
+  color: var(--color-primary-dark);
+  font-size: 24px;
+}
+
+.product-review-section {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(320px, 1fr);
+  gap: 18px;
+  align-items: start;
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.product-review-section p {
+  margin: 8px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.8;
 }
 
 .cart-layout {
@@ -1865,6 +2121,17 @@ img {
   font-weight: 800;
 }
 
+.cart-customization-summary,
+.order-items-summary small,
+.order-items-strip small {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.7;
+}
+
 .cart-item input {
   width: 92px;
 }
@@ -1884,6 +2151,16 @@ img {
 
 .owner-order-filters {
   grid-template-columns: minmax(220px, 1fr) 220px auto;
+}
+
+.order-items-summary {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.order-items-summary span {
+  display: block;
 }
 
 .owner-customer-filters {
@@ -2435,7 +2712,9 @@ img {
   .owner-stats,
   .toggle-grid,
   .image-editor-grid,
-  .cart-layout {
+  .cart-layout,
+  .product-details-layout,
+  .product-review-section {
     grid-template-columns: 1fr;
   }
 
@@ -2621,6 +2900,16 @@ img {
 
   .cart-summary {
     position: static;
+  }
+
+  .product-details-panel,
+  .product-review-section {
+    padding: 18px;
+  }
+
+  .product-purchase-box > div {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .bar-row {

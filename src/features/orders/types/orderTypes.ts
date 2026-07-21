@@ -19,6 +19,8 @@ export type OrderItem = {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  customizationSummary: string;
+  customizationDetailsJson: string;
 };
 
 export type Order = {
@@ -44,7 +46,20 @@ export type Order = {
 };
 
 export type CreateOrderRequest = {
-  items: Array<{ productId: string; quantity: number }>;
+  items: Array<{
+    productId: string;
+    quantity: number;
+    selectedOptions?: Array<{
+      groupId: string;
+      valueId: string;
+    }>;
+    customFields?: Array<{
+      fieldId: string;
+      value?: string;
+      selectedChoiceIds?: string[];
+    }>;
+    customRequest?: string;
+  }>;
   shippingAddress?: string;
   notes?: string;
 };

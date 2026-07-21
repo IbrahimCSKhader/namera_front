@@ -131,7 +131,16 @@ export function OwnerOrdersPage() {
                   <td>{order.total.toLocaleString('ar')} شيكل</td>
                   <td><span className={`status-badge ${order.status}`}>{order.statusLabel}</span></td>
                   <td>{order.stockDeducted ? 'مخصوم' : 'لم يخصم'}</td>
-                  <td>{order.items.map((item) => `${item.productName} × ${item.quantity}`).join('، ')}</td>
+                  <td>
+                    <div className="order-items-summary">
+                      {order.items.map((item) => (
+                        <span key={item.id}>
+                          {item.productName} × {item.quantity}
+                          {item.customizationSummary ? <small>{item.customizationSummary}</small> : null}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
                   <td>
                     <select value={order.status} onChange={(event) => void changeStatus(order, event.target.value as OrderStatus)}>
                       {nextStatuses.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}

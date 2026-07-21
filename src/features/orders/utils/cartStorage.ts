@@ -2,13 +2,36 @@ import { type Product } from '../../products/types/productTypes';
 
 export const cartStorageKey = 'resin_bon_guest_cart';
 
+export type CartCustomizationOption = {
+  groupId: string;
+  groupName: string;
+  valueId: string;
+  valueLabel: string;
+  extraPrice: number;
+};
+
+export type CartCustomizationField = {
+  fieldId: string;
+  fieldLabel: string;
+  fieldType: string;
+  value: string;
+  selectedChoiceIds: string[];
+  displayValue: string;
+  additionalPrice: number;
+};
+
 export type CartItem = {
+  cartItemId: string;
   productId: string;
   name: string;
   priceLabel: string;
   unitPrice: number;
   imageUrl: string;
   quantity: number;
+  selectedOptions: CartCustomizationOption[];
+  customFields: CartCustomizationField[];
+  customRequest: string;
+  customizationSummary: string;
 };
 
 export function readCart(): CartItem[] {
@@ -18,7 +41,21 @@ export function readCart(): CartItem[] {
       return [];
     }
 
-    return (JSON.parse(rawCart) as CartItem[]).filter((item) => item.productId && item.quantity > 0);
+    return (JSON.parse(rawCart) as CartItem[])
+      .filter((item) => item.productId && item.quantity > 0)
+      .map((item) => ({
+        cartItemId: item.cartItemId ?? item.productId,
+        productId: item.productId,
+        name: item.name,
+        priceLabel: item.priceLabel,
+        unitPrice: item.unitPrice,
+        imageUrl: item.imageUrl,
+        quantity: item.quantity,
+        selectedOptions: item.selectedOptions ?? [],
+        customFields: item.customFields ?? [],
+        customRequest: item.customRequest ?? '',
+        customizationSummary: item.customizationSummary ?? '',
+      }));
   } catch {
     return [];
   }
@@ -33,30 +70,51 @@ export function clearCart() {
   writeCart([]);
 }
 
-export function addProductToCart(product: Product) {
+export function addProductToCart(
+  product: Product,
+  options: {
+    quantity?: number;
+    selectedOptions?: CartCustomizationOption[];
+    customFields?: CartCustomizationField[];
+    customRequest?: string;
+    unitPrice?: number;
+    customizationSummary?: string;
+  } = {},
+) {
   const items = readCart();
-  const existing = items.find((item) => item.productId === product.id);
   const image = product.images.find((item) => item.isPrimary) ?? product.images[0];
+  const selectedOptions = options.selectedOptions ?? [];
+  const customFields = options.customFields ?? [];
+  const customRequest = (options.customRequest ?? '').trim();
+  const customizationSummary = options.customizationSummary ?? buildCustomizationSummary(selectedOptions, customFields, customRequest);
+  const cartItemId = createCartItemId(product.id, selectedOptions, customFields, customRequest);
+  const existing = items.find((item) => item.cartItemId === cartItemId);
+  const quantity = Math.max(1, options.quantity ?? 1);
 
   if (existing) {
-    existing.quantity += 1;
+    existing.quantity += quantity;
   } else {
     items.push({
+      cartItemId,
       productId: product.id,
       name: product.name,
       priceLabel: product.priceLabel,
-      unitPrice: product.basePrice ?? 0,
+      unitPrice: options.unitPrice ?? product.basePrice ?? 0,
       imageUrl: image?.imageUrl ?? '',
-      quantity: 1,
+      quantity,
+      selectedOptions,
+      customFields,
+      customRequest,
+      customizationSummary,
     });
   }
 
   writeCart(items);
 }
 
-export function updateCartQuantity(productId: string, quantity: number) {
+export function updateCartQuantity(cartItemId: string, quantity: number) {
   const nextItems = readCart()
-    .map((item) => (item.productId === productId ? { ...item, quantity } : item))
+    .map((item) => (item.cartItemId === cartItemId ? { ...item, quantity } : item))
     .filter((item) => item.quantity > 0);
 
   writeCart(nextItems);
@@ -64,4 +122,42 @@ export function updateCartQuantity(productId: string, quantity: number) {
 
 export function getCartCount() {
   return readCart().reduce((total, item) => total + item.quantity, 0);
+}
+
+function buildCustomizationSummary(
+  selectedOptions: CartCustomizationOption[],
+  customFields: CartCustomizationField[],
+  customRequest: string,
+) {
+  const parts = [
+    ...selectedOptions.map((option) => `${option.groupName}: ${option.valueLabel}`),
+    ...customFields.filter((field) => field.displayValue).map((field) => `${field.fieldLabel}: ${field.displayValue}`),
+  ];
+
+  if (customRequest) {
+    parts.push(`طلب خاص: ${customRequest}`);
+  }
+
+  return parts.join(' | ');
+}
+
+function createCartItemId(
+  productId: string,
+  selectedOptions: CartCustomizationOption[],
+  customFields: CartCustomizationField[],
+  customRequest: string,
+) {
+  const signature = JSON.stringify({
+    productId,
+    selectedOptions: selectedOptions.map((option) => [option.groupId, option.valueId]).sort(),
+    customFields: customFields.map((field) => [field.fieldId, field.value, field.selectedChoiceIds.slice().sort()]).sort(),
+    customRequest,
+  });
+
+  let hash = 0;
+  for (let index = 0; index < signature.length; index += 1) {
+    hash = ((hash << 5) - hash + signature.charCodeAt(index)) | 0;
+  }
+
+  return `${productId}:${Math.abs(hash).toString(36)}`;
 }

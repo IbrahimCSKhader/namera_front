@@ -17,8 +17,8 @@ export function CartPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [items]);
 
-  function changeQuantity(productId: string, quantity: number) {
-    updateCartQuantity(productId, quantity);
+  function changeQuantity(cartItemId: string, quantity: number) {
+    updateCartQuantity(cartItemId, quantity);
     setItems(readCart());
   }
 
@@ -39,7 +39,20 @@ export function CartPage() {
 
     try {
       const response = await createOrder({
-        items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+        items: items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          selectedOptions: item.selectedOptions.map((option) => ({
+            groupId: option.groupId,
+            valueId: option.valueId,
+          })),
+          customFields: item.customFields.map((field) => ({
+            fieldId: field.fieldId,
+            value: field.value,
+            selectedChoiceIds: field.selectedChoiceIds,
+          })),
+          customRequest: item.customRequest,
+        })),
         shippingAddress,
         notes,
       });
@@ -73,13 +86,14 @@ export function CartPage() {
           <section className="cart-layout">
             <div className="cart-items">
               {items.map((item) => (
-                <article className="cart-item" key={item.productId}>
+                <article className="cart-item" key={item.cartItemId}>
                   {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.name} /> : <span className="table-thumb empty" />}
                   <div>
                     <h3>{item.name}</h3>
                     <p>{item.priceLabel || `${item.unitPrice.toLocaleString('ar')} شيكل`}</p>
+                    {item.customizationSummary ? <small className="cart-customization-summary">{item.customizationSummary}</small> : null}
                   </div>
-                  <input min="0" type="number" value={item.quantity} onChange={(event) => changeQuantity(item.productId, Number(event.target.value))} />
+                  <input min="0" type="number" value={item.quantity} onChange={(event) => changeQuantity(item.cartItemId, Number(event.target.value))} />
                 </article>
               ))}
             </div>

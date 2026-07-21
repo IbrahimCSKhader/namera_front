@@ -41,15 +41,27 @@ export type Product = {
   optionGroups: Array<{
     id: string;
     name: string;
+    description: string;
     isRequired: boolean;
+    isActive: boolean;
+    displayOrder: number;
     values: Array<{ id: string; label: string; extraPrice: number; isDefault: boolean }>;
   }>;
   customizationFields: Array<{
     id: string;
     label: string;
     type: string;
+    description: string;
+    placeholder: string;
     isRequired: boolean;
+    displayOrder: number;
     additionalPrice: number;
+    minLength: number | null;
+    maxLength: number | null;
+    minValue: number | null;
+    maxValue: number | null;
+    allowedFiles: string[];
+    isActive: boolean;
     choices: Array<{ id: string; label: string; additionalPrice: number }>;
   }>;
 };

@@ -20,6 +20,7 @@ import { AddProductPage } from '../../features/products/admin/pages/AddProductPa
 import { CategoriesManagementPage } from '../../features/products/admin/pages/CategoriesManagementPage';
 import { EditProductPage } from '../../features/products/admin/pages/EditProductPage';
 import { ProductsManagementPage } from '../../features/products/admin/pages/ProductsManagementPage';
+import { ProductDetailsPage } from '../../features/products/pages/ProductDetailsPage';
 import { ProductsPage } from '../../features/products/pages/ProductsPage';
 import { AboutPage } from '../../features/public/pages/AboutPage';
 import { HomePage } from '../../features/public/pages/HomePage';
@@ -31,6 +32,7 @@ export function AppRouter() {
     <Routes>
       <Route path={ROUTES.home} element={<HomePage />} />
       <Route path={ROUTES.products} element={<ProductsPage />} />
+      <Route path={ROUTES.productDetails} element={<ProductDetailsPage />} />
       <Route path={ROUTES.categories} element={<ProductsPage />} />
       <Route path={ROUTES.about} element={<AboutPage />} />
       <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />

@@ -8,6 +8,12 @@ export function getProducts(): Promise<ApiResponse<Product[]>> {
   });
 }
 
+export function getProduct(slug: string): Promise<ApiResponse<Product>> {
+  return apiClient<ApiResponse<Product>>(`/products/${encodeURIComponent(slug)}`, {
+    requiresAuth: false,
+  });
+}
+
 export function getCategories(): Promise<ApiResponse<ProductCategory[]>> {
   return apiClient<ApiResponse<ProductCategory[]>>('/products/categories', {
     requiresAuth: false,

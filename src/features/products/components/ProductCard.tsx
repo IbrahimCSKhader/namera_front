@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import { type Product } from '../types/productTypes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
-import { addProductToCart } from '../../orders/utils/cartStorage';
+import { ROUTES } from '../../../shared/constants/routes';
 
 type ProductCardProps = {
   product: Product;
@@ -8,7 +9,7 @@ type ProductCardProps = {
 
 export function ProductCard({ product }: ProductCardProps) {
   const primaryImage = product.images.find((image) => image.isPrimary) ?? product.images[0];
-  const canOrder = product.allowOrdering;
+  const productUrl = ROUTES.productDetails.replace(':slug', product.slug);
 
   return (
     <article className="shop-product-card">
@@ -25,9 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <h3>{product.name}</h3>
         {product.shortDescription ? <p>{product.shortDescription}</p> : null}
         <strong>{product.priceLabel || (product.basePrice == null ? '' : `${product.basePrice.toLocaleString('ar')} ₪`)}</strong>
-        <button className="shop-add-button" type="button" disabled={!canOrder} onClick={() => addProductToCart(product)}>
-          {canOrder ? 'إضافة للسلة' : 'غير متاح للطلب'}
-        </button>
+        <Link className="shop-add-button" to={productUrl}>عرض المنتج</Link>
       </div>
     </article>
   );
