@@ -42,6 +42,8 @@ export function HomePage() {
         <p>واجهة المتجر تعرض فقط البيانات المحفوظة في قاعدة البيانات.</p>
       </section>
 
+      {products.length > 0 ? <ProductViewer products={products.slice(0, 10)} /> : null}
+
       <section className="shop-section">
         <div className="shop-section-heading">
           <h2>التصنيفات</h2>
@@ -80,5 +82,36 @@ export function HomePage() {
         )}
       </section>
     </main>
+  );
+}
+
+function ProductViewer({ products }: { products: Product[] }) {
+  const viewerProducts = [...products, ...products];
+
+  return (
+    <section className="product-viewer-section" aria-label="مختارات المنتجات">
+      <div className="shop-section-heading">
+        <h2>اختاري منتجك</h2>
+        <Link to={ROUTES.products}>عرض الكل</Link>
+      </div>
+      <div className="product-viewer" dir="ltr">
+        <div className="product-viewer-track">
+          {viewerProducts.map((product, index) => {
+            const image = product.images.find((item) => item.isPrimary) ?? product.images[0];
+
+            return (
+              <Link className="product-viewer-item" key={`${product.id}-${index}`} to={ROUTES.productDetails.replace(':slug', product.slug)} dir="rtl">
+                {image?.imageUrl ? (
+                  <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || product.name} loading="lazy" decoding="async" />
+                ) : (
+                  <span className="product-viewer-placeholder" />
+                )}
+                <strong>{product.name}</strong>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
