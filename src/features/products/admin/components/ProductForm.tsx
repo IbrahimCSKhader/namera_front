@@ -252,7 +252,7 @@ function ImagesSection({
         <div className="image-editor-grid">
           {draft.images.map((image, index) => (
             <article className="image-editor" key={image.id}>
-              <div className="image-preview">{image.imageUrl ? <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || draft.name} /> : <span>معاينة</span>}</div>
+              <div className="image-preview">{image.imageUrl ? <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || draft.name} loading="lazy" decoding="async" /> : <span>معاينة</span>}</div>
               <label className="file-picker-card">
                 <input accept="image/*" type="file" onChange={(event) => {
                   const file = event.target.files?.[0];
@@ -529,7 +529,7 @@ function PreviewSection({ draft, pricingLabel }: { draft: ProductDraft; pricingL
       <div>
         <h2>معاينة المنتج</h2>
         <article className="admin-product-preview">
-          <div className="preview-media">{primary?.imageUrl ? <img src={resolveMediaUrl(primary.imageUrl)} alt={primary.altText || draft.name} /> : <span>صورة المنتج</span>}</div>
+          <div className="preview-media">{primary?.imageUrl ? <img src={resolveMediaUrl(primary.imageUrl)} alt={primary.altText || draft.name} loading="lazy" decoding="async" /> : <span>صورة المنتج</span>}</div>
           <div>
             <span className="product-tag">{draft.status === 'published' ? 'منشور' : 'مسودة'}</span>
             <h3>{draft.name || 'اسم المنتج'}</h3>

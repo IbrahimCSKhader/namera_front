@@ -12,13 +12,13 @@ export function PublicLayout({ title, subtitle, sideTitle, children }: PublicLay
   return (
     <main className="auth-page">
       <section className="brand-header" aria-label={`${BRAND.name} store`}>
-        <img className="brand-logo-image" src={BRAND.logoUrl} alt={BRAND.name} />
+        <img className="brand-logo-image" src={BRAND.logoUrl} alt={BRAND.name} decoding="async" />
         <h1>{BRAND.name}</h1>
         <p>{BRAND.tagline}</p>
       </section>
       <section className="auth-shell">
         <aside className="auth-art" aria-hidden="true">
-          <img src={BRAND.coverUrl} alt="" />
+          <img src={BRAND.coverUrl} alt="" decoding="async" />
           <span>{sideTitle}</span>
         </aside>
         <section className="auth-card">

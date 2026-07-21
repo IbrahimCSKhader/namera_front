@@ -18,7 +18,7 @@ export function AboutPage() {
           </p>
         </div>
         <div className="about-hero-media">
-          <img src={BRAND.coverUrl} alt="قطع ريزن يدوية من Resin Bon" />
+          <img src={BRAND.coverUrl} alt="قطع ريزن يدوية من Resin Bon" loading="lazy" decoding="async" />
         </div>
       </section>
 
@@ -31,7 +31,7 @@ export function AboutPage() {
             لذلك نعامل كل طلب كقطعة واحدة لا تتكرر، ونصنعها يدويًا بخطوات هادئة تبدأ من فهم الفكرة وتنتهي بتغليف يليق بها.
           </p>
         </div>
-        <img src={BRAND.logoUrl} alt="شعار Resin Bon" />
+        <img src={BRAND.logoUrl} alt="شعار Resin Bon" loading="lazy" decoding="async" />
       </section>
 
       <section className="about-milestones">

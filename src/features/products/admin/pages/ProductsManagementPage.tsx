@@ -108,7 +108,7 @@ export function ProductsManagementPage() {
             <tbody>
               {products.map((product) => (
                 <tr key={product.id}>
-                  <td>{product.primaryImageUrl ? <img className="table-thumb" src={resolveMediaUrl(product.primaryImageUrl)} alt={product.name} /> : <span className="table-thumb empty" />}</td>
+                  <td>{product.primaryImageUrl ? <img className="table-thumb" src={resolveMediaUrl(product.primaryImageUrl)} alt={product.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}</td>
                   <td>{product.name}</td>
                   <td>{product.categoryName}</td>
                   <td>{product.priceLabel}</td>

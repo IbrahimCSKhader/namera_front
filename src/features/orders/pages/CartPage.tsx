@@ -93,7 +93,7 @@ export function CartPage() {
             <div className="cart-items">
               {items.map((item) => (
                 <article className="cart-item" key={item.cartItemId}>
-                  {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.name} /> : <span className="table-thumb empty" />}
+                  {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}
                   <div>
                     <h3>{item.name}</h3>
                     <p>{item.priceLabel || `${item.unitPrice.toLocaleString('ar')} شيكل`}</p>

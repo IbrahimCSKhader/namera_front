@@ -52,7 +52,7 @@ export function CustomerOrdersPage() {
               <div className="order-items-strip">
                 {order.items.map((item) => (
                   <div key={item.id}>
-                    {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.productName} /> : null}
+                    {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.productName} loading="lazy" decoding="async" /> : null}
                     <span>
                       {item.productName} × {item.quantity}
                       {item.customizationSummary ? <small>{item.customizationSummary}</small> : null}

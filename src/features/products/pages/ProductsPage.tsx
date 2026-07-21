@@ -92,7 +92,7 @@ function CategoriesGrid({ categories }: { categories: ProductCategory[] }) {
     <div className="shop-category-grid public-category-list">
       {categories.map((category, index) => (
         <Link className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
-          {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} /> : <div className="shop-category-placeholder" />}
+          {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <div className="shop-category-placeholder" />}
           <div>
             <h3>{category.name}</h3>
             {category.description ? <p>{category.description}</p> : null}

@@ -15,7 +15,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <article className="shop-product-card">
       <div className="shop-product-media">
         {primaryImage?.imageUrl ? (
-          <img src={resolveMediaUrl(primaryImage.imageUrl)} alt={primaryImage.altText || product.name} />
+          <img src={resolveMediaUrl(primaryImage.imageUrl)} alt={primaryImage.altText || product.name} loading="lazy" decoding="async" />
         ) : (
           <span className="shop-product-placeholder" />
         )}

@@ -187,7 +187,7 @@ export function CategoriesManagementPage() {
             <input accept="image/*" type="file" onChange={(event) => setImageFile(event.target.files?.[0] ?? null)} />
             <span>{imageFile?.name ?? 'اختيار صورة من الجهاز'}</span>
           </label>
-          {draft.imageUrl ? <img className="category-form-preview" src={resolveMediaUrl(draft.imageUrl)} alt={draft.name || 'تصنيف'} /> : null}
+          {draft.imageUrl ? <img className="category-form-preview" src={resolveMediaUrl(draft.imageUrl)} alt={draft.name || 'تصنيف'} loading="lazy" decoding="async" /> : null}
         </div>
 
         {error ? <div className="form-error">{error}</div> : null}
@@ -221,7 +221,7 @@ export function CategoriesManagementPage() {
               {categories.map((category) => (
                 <tr key={category.id}>
                   <td>
-                    {category.imageUrl ? <img className="table-thumb" src={resolveMediaUrl(category.imageUrl)} alt={category.name} /> : <span className="table-thumb empty" />}
+                    {category.imageUrl ? <img className="table-thumb" src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}
                   </td>
                   <td>
                     <strong>{category.name}</strong>

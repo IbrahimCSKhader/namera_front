@@ -160,7 +160,7 @@ export function ProductDetailsPage() {
       <section className="product-details-layout">
         <div className="product-gallery">
           <div className="product-main-image">
-            {selectedImageUrl ? <img src={resolveMediaUrl(selectedImageUrl)} alt={product.name} /> : <span className="shop-product-placeholder" />}
+            {selectedImageUrl ? <img src={resolveMediaUrl(selectedImageUrl)} alt={product.name} decoding="async" /> : <span className="shop-product-placeholder" />}
           </div>
           {product.images.length > 1 ? (
             <div className="product-thumbs">
@@ -171,7 +171,7 @@ export function ProductDetailsPage() {
                   type="button"
                   onClick={() => setSelectedImage(image.imageUrl)}
                 >
-                  <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || product.name} />
+                  <img src={resolveMediaUrl(image.imageUrl)} alt={image.altText || product.name} loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>

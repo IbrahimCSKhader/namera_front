@@ -27,6 +27,11 @@ export function AppHeader() {
 
   useEffect(() => {
     async function loadCategories() {
+      if (isOwner) {
+        setCategories([]);
+        return;
+      }
+
       try {
         const response = await productApi.getCategories();
         setCategories(response.data ?? []);
@@ -36,7 +41,7 @@ export function AppHeader() {
     }
 
     void loadCategories();
-  }, []);
+  }, [isOwner]);
 
   useEffect(() => {
     function syncCartCount() {
@@ -79,7 +84,7 @@ export function AppHeader() {
     <header className="global-header">
       <div className="global-header-inner">
         <Link className="global-logo" to={ROUTES.home} onClick={closeMenu}>
-          <img className="global-logo-image" src={BRAND.logoUrl} alt={BRAND.name} />
+          <img className="global-logo-image" src={BRAND.logoUrl} alt={BRAND.name} decoding="async" />
           <span>{BRAND.name}</span>
         </Link>
 

@@ -135,7 +135,7 @@ export function CustomerReviewsPage() {
                 {reviews.map((review) => (
                   <article className="customer-card review-card" key={review.id}>
                     <header>
-                      {review.productImageUrl ? <img src={resolveMediaUrl(review.productImageUrl)} alt={review.productName} /> : null}
+                      {review.productImageUrl ? <img src={resolveMediaUrl(review.productImageUrl)} alt={review.productName} loading="lazy" decoding="async" /> : null}
                       <div>
                         <h3>{review.productName}</h3>
                         <p>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</p>

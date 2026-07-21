@@ -33,7 +33,7 @@ export function HomePage() {
   return (
     <main className="shop-page" id="products">
       <section className="store-cover" aria-label={BRAND.name}>
-        <img src={BRAND.coverUrl} alt={`${BRAND.name} cover`} />
+        <img src={BRAND.coverUrl} alt={`${BRAND.name} cover`} decoding="async" />
       </section>
 
       <section className="page-heading shop-heading">
@@ -50,13 +50,13 @@ export function HomePage() {
         {categories.length > 0 ? (
           <div className="shop-category-grid">
             {categories.slice(0, 5).map((category, index) => (
-              <article className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.slug}>
-                {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} /> : <div className="shop-category-placeholder" />}
+              <Link className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.slug} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
+                {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <div className="shop-category-placeholder" />}
                 <div>
                   <h3>{category.name}</h3>
                   {category.description ? <p>{category.description}</p> : null}
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         ) : (
@@ -71,7 +71,7 @@ export function HomePage() {
         </div>
         {products.length > 0 ? (
           <div className="shop-product-grid">
-            {products.map((product) => (
+            {products.slice(0, 8).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
