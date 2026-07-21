@@ -7,7 +7,7 @@ type RequestOptions = {
   requiresAuth?: boolean;
 };
 
-const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://resinbonn.runasp.net/api';
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? 'https://resinbonn.runasp.net/api';
 
 export const apiBaseUrl = getApiBaseUrl();
 
