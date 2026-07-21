@@ -6,6 +6,7 @@ import { Input } from '../../../shared/components/ui/Input';
 import { ROUTES } from '../../../shared/constants/routes';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import { useAuth } from '../hooks/useAuth';
+import { resendEmailConfirmation } from '../services/authApi';
 
 export type LoginFormState = {
   identifier: string;
@@ -56,8 +57,11 @@ const demoAccounts = [
 
 export function LoginForm() {
   const [formState, setFormState] = useState<LoginFormState>(initialFormState);
+  const [confirmationEmail, setConfirmationEmail] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
+  const [resendMessage, setResendMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -83,6 +87,26 @@ export function LoginForm() {
       setErrors(resolveErrors(error));
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleResendConfirmation() {
+    if (!confirmationEmail.trim()) {
+      setErrors(['اكتب البريد الإلكتروني لإعادة إرسال رابط التفعيل']);
+      return;
+    }
+
+    setIsResending(true);
+    setErrors([]);
+    setResendMessage('');
+
+    try {
+      const response = await resendEmailConfirmation({ email: confirmationEmail.trim() });
+      setResendMessage(response.message || 'تم إرسال رابط التفعيل مرة أخرى.');
+    } catch (error) {
+      setErrors(resolveErrors(error));
+    } finally {
+      setIsResending(false);
     }
   }
 
@@ -125,6 +149,21 @@ export function LoginForm() {
       <Button type="submit" isLoading={isSubmitting}>
         {labels.submit}
       </Button>
+      <div className="resend-confirmation-box">
+        {resendMessage ? <div className="form-success">{resendMessage}</div> : null}
+        <Input
+          label="لم يصلك رابط التفعيل؟"
+          name="confirmationEmail"
+          type="email"
+          value={confirmationEmail}
+          placeholder="name@example.com"
+          dir="ltr"
+          onChange={setConfirmationEmail}
+        />
+        <button className="text-button" type="button" disabled={isResending} onClick={() => void handleResendConfirmation()}>
+          {isResending ? 'جار الإرسال...' : 'إعادة إرسال رابط التفعيل'}
+        </button>
+      </div>
     </form>
   );
 }

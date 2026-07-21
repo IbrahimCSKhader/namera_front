@@ -1,9 +1,7 @@
 import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '../../../shared/components/ui/Button';
 import { FormError } from '../../../shared/components/ui/FormError';
 import { Input } from '../../../shared/components/ui/Input';
-import { ROUTES } from '../../../shared/constants/routes';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import { useAuth } from '../hooks/useAuth';
 import { type RegisterRequest } from '../types/authTypes';
@@ -31,8 +29,8 @@ const initialFormState: RegisterFormState = {
 export function RegisterForm() {
   const [formState, setFormState] = useState<RegisterFormState>(initialFormState);
   const [errors, setErrors] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
   const { register } = useAuth();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -46,10 +44,12 @@ export function RegisterForm() {
 
     setIsSubmitting(true);
     setErrors([]);
+    setSuccessMessage('');
 
     try {
-      const user = await register(buildRegisterRequest(formState));
-      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerDashboard, { replace: true });
+      const response = await register(buildRegisterRequest(formState));
+      setFormState(initialFormState);
+      setSuccessMessage(`تم إنشاء الحساب. أرسلنا رابط التفعيل إلى ${response.email}. افتح البريد واضغط رابط التأكيد قبل تسجيل الدخول.`);
     } catch (error) {
       setErrors(resolveErrors(error));
     } finally {
@@ -60,6 +60,7 @@ export function RegisterForm() {
   return (
     <form className="form-stack" onSubmit={handleSubmit}>
       <FormError errors={errors} />
+      {successMessage ? <div className="form-success">{successMessage}</div> : null}
       <Input
         label="الاسم الكامل"
         name="fullName"
@@ -78,7 +79,7 @@ export function RegisterForm() {
           onChange={(value) => setFormState((current) => ({ ...current, phoneNumber: value }))}
         />
         <Input
-          label="البريد الإلكتروني - اختياري"
+          label="البريد الإلكتروني"
           name="email"
           type="email"
           value={formState.email}
@@ -142,7 +143,9 @@ export function validateRegisterForm(formState: RegisterFormState): string[] {
     errors.push('رقم الهاتف مطلوب ويجب أن يحتوي 8 أرقام على الأقل');
   }
 
-  if (formState.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
+  if (!formState.email.trim()) {
+    errors.push('البريد الإلكتروني مطلوب لتفعيل الحساب');
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email.trim())) {
     errors.push('البريد الإلكتروني غير صالح');
   }
 

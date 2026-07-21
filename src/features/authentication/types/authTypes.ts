@@ -17,6 +17,12 @@ export type AuthResponse = {
   user: CurrentUser;
 };
 
+export type RegistrationResponse = {
+  userId: string;
+  email: string;
+  requiresEmailConfirmation: boolean;
+};
+
 export type LoginRequest = {
   identifier: string;
   password: string;
@@ -31,4 +37,13 @@ export type RegisterRequest = {
   address: string;
   password: string;
   confirmPassword: string;
+};
+
+export type ConfirmEmailRequest = {
+  userId: string;
+  token: string;
+};
+
+export type ResendEmailConfirmationRequest = {
+  email: string;
 };

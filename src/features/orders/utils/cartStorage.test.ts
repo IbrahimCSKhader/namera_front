@@ -85,13 +85,25 @@ describe('cart storage', () => {
 
   it('updates quantities and removes zero quantity items', () => {
     addProductToCart(product);
+    const [item] = readCart();
 
-    updateCartQuantity('product-1', 4);
+    updateCartQuantity(item.cartItemId, 4);
     expect(getCartCount()).toBe(4);
 
-    updateCartQuantity('product-1', 0);
+    updateCartQuantity(item.cartItemId, 0);
     expect(readCart()).toEqual([]);
     expect(storage.get(cartStorageKey)).toBe('[]');
+  });
+
+  it('keeps the same product separate when customizations differ', () => {
+    addProductToCart(product, { customRequest: 'Gold name' });
+    addProductToCart(product, { customRequest: 'Pink name' });
+
+    const items = readCart();
+
+    expect(items).toHaveLength(2);
+    expect(items.map((item) => item.customRequest)).toEqual(['Gold name', 'Pink name']);
+    expect(getCartCount()).toBe(2);
   });
 
   it('clears invalid stored cart values safely', () => {

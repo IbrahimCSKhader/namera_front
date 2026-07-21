@@ -8,6 +8,7 @@ export const ROUTES = {
   cart: '/cart',
   login: '/login',
   register: '/register',
+  confirmEmail: '/confirm-email',
   customerDashboard: '/customer/dashboard',
   customerProfile: '/account/profile',
   customerOrders: '/account/orders',

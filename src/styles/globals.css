@@ -998,6 +998,14 @@ img {
   border-radius: 999px;
 }
 
+.resend-confirmation-box {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(216, 194, 187, 0.55);
+}
+
 .app-page {
   min-height: 100vh;
   padding: 32px 24px;

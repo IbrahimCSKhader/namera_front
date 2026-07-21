@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { ConfirmEmailPage } from '../../features/authentication/pages/ConfirmEmailPage';
 import { LoginPage } from '../../features/authentication/pages/LoginPage';
 import { RegisterPage } from '../../features/authentication/pages/RegisterPage';
 import { CustomerRoute } from '../../features/authentication/routes/CustomerRoute';
@@ -39,6 +40,7 @@ export function AppRouter() {
       <Route path={ROUTES.cart} element={<CartPage />} />
       <Route path={ROUTES.login} element={<LoginPage />} />
       <Route path={ROUTES.register} element={<RegisterPage />} />
+      <Route path={ROUTES.confirmEmail} element={<ConfirmEmailPage />} />
       <Route
         path={ROUTES.customerDashboard}
         element={

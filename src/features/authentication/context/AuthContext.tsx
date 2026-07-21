@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import * as authApi from '../services/authApi';
-import { type CurrentUser, type LoginRequest, type RegisterRequest } from '../types/authTypes';
+import { type CurrentUser, type LoginRequest, type RegistrationResponse, type RegisterRequest } from '../types/authTypes';
 import {
   clearStoredUser,
   clearToken,
@@ -16,7 +16,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (request: LoginRequest) => Promise<CurrentUser>;
-  register: (request: RegisterRequest) => Promise<CurrentUser>;
+  register: (request: RegisterRequest) => Promise<RegistrationResponse>;
   refreshCurrentUser: () => Promise<void>;
   logout: () => void;
 };
@@ -85,12 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw new Error(response.message);
     }
 
-    setToken(response.data.token);
-    setStoredUser(response.data.user);
-    setTokenState(response.data.token);
-    setUser(response.data.user);
-
-    return response.data.user;
+    return response.data;
   }, []);
 
   const value = useMemo<AuthContextValue>(
