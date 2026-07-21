@@ -10,14 +10,18 @@ import { type Product, type ProductCategory } from '../types/productTypes';
 
 export function ProductsPage() {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [page, setPage] = useState(1);
   const isCategoriesPage = location.pathname === ROUTES.categories;
-  const pageSize = isCategoriesPage ? 9 : 12;
+  const pageSize = isCategoriesPage ? 9 : 10;
+  const searchQuery = searchParams.get('search') ?? '';
+  const selectedCategoryId = searchParams.get('category') ?? '';
+  const selectedType = searchParams.get('type') ?? '';
+  const selectedSort = searchParams.get('sort') ?? 'featured';
 
   useEffect(() => {
     async function loadStorefront() {
@@ -43,24 +47,58 @@ export function ProductsPage() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const query = (searchParams.get('search') ?? '').trim().toLowerCase();
-    const categoryId = searchParams.get('category') ?? '';
+    const query = searchQuery.trim().toLowerCase();
 
-    return products.filter((product) => {
+    const filtered = products.filter((product) => {
       const searchableValues = [product.name, product.shortDescription, product.category.name].map((value) => value.toLowerCase());
       const matchesSearch = query ? searchableValues.some((value) => value.includes(query)) : true;
-      const matchesCategory = categoryId ? product.category.id === categoryId : true;
-      return matchesSearch && matchesCategory;
+      const matchesCategory = selectedCategoryId ? product.category.id === selectedCategoryId : true;
+      const matchesType = selectedType === 'custom'
+        ? product.isCustomizable
+        : selectedType === 'ready'
+          ? !product.isCustomizable
+          : true;
+      return matchesSearch && matchesCategory && matchesType;
     });
-  }, [products, searchParams]);
 
-  const activeCategory = categories.find((category) => category.id === searchParams.get('category'));
+    return [...filtered].sort((first, second) => {
+      if (selectedSort === 'priceAsc') {
+        return (first.basePrice ?? 0) - (second.basePrice ?? 0);
+      }
+
+      if (selectedSort === 'priceDesc') {
+        return (second.basePrice ?? 0) - (first.basePrice ?? 0);
+      }
+
+      if (selectedSort === 'name') {
+        return first.name.localeCompare(second.name, 'ar');
+      }
+
+      return Number(second.isFeatured) - Number(first.isFeatured) || Number(second.isNew) - Number(first.isNew);
+    });
+  }, [products, searchQuery, selectedCategoryId, selectedSort, selectedType]);
+
+  const activeCategory = categories.find((category) => category.id === selectedCategoryId);
   const visibleProducts = paginateItems(filteredProducts, page, pageSize);
   const visibleCategories = paginateItems(categories, page, pageSize);
 
   useEffect(() => {
     setPage(1);
   }, [isCategoriesPage, searchParams]);
+
+  function updateFilter(key: string, value: string) {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) {
+      nextParams.set(key, value);
+    } else {
+      nextParams.delete(key);
+    }
+    setSearchParams(nextParams, { replace: true });
+  }
+
+  function clearFilters() {
+    setSearchParams({}, { replace: true });
+  }
 
   return (
     <main className="shop-page">
@@ -81,7 +119,15 @@ export function ProductsPage() {
         </>
       ) : filteredProducts.length > 0 ? (
         <>
-          <CategoryFilter activeCategoryId={activeCategory?.id ?? ''} categories={categories} />
+          <ProductFilters
+            categories={categories}
+            searchQuery={searchQuery}
+            selectedCategoryId={selectedCategoryId}
+            selectedSort={selectedSort}
+            selectedType={selectedType}
+            onChange={updateFilter}
+            onClear={clearFilters}
+          />
           <div className="shop-product-grid">
             {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -130,5 +176,59 @@ function CategoryFilter({ activeCategoryId, categories }: { activeCategoryId: st
         </Link>
       ))}
     </div>
+  );
+}
+
+function ProductFilters({
+  categories,
+  searchQuery,
+  selectedCategoryId,
+  selectedSort,
+  selectedType,
+  onChange,
+  onClear,
+}: {
+  categories: ProductCategory[];
+  searchQuery: string;
+  selectedCategoryId: string;
+  selectedSort: string;
+  selectedType: string;
+  onChange: (key: string, value: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <section className="product-filter-panel" aria-label="فلترة المنتجات">
+      <label className="field admin-field">
+        بحث
+        <input value={searchQuery} placeholder="اسم المنتج أو التصنيف" onChange={(event) => onChange('search', event.target.value)} />
+      </label>
+      <label className="field admin-field">
+        التصنيف
+        <select value={selectedCategoryId} onChange={(event) => onChange('category', event.target.value)}>
+          <option value="">كل التصنيفات</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>{category.name}</option>
+          ))}
+        </select>
+      </label>
+      <label className="field admin-field">
+        النوع
+        <select value={selectedType} onChange={(event) => onChange('type', event.target.value)}>
+          <option value="">كل المنتجات</option>
+          <option value="custom">قابل للتخصيص</option>
+          <option value="ready">جاهز</option>
+        </select>
+      </label>
+      <label className="field admin-field">
+        الترتيب
+        <select value={selectedSort} onChange={(event) => onChange('sort', event.target.value)}>
+          <option value="featured">المميزة أولاً</option>
+          <option value="priceAsc">السعر من الأقل</option>
+          <option value="priceDesc">السعر من الأعلى</option>
+          <option value="name">الاسم</option>
+        </select>
+      </label>
+      <button className="button button-secondary" type="button" onClick={onClear}>مسح الفلاتر</button>
+    </section>
   );
 }
