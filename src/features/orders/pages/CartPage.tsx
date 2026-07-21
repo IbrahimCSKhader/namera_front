@@ -5,6 +5,9 @@ import { createOrder } from '../services/orderApi';
 import { clearCart, readCart, updateCartQuantity } from '../utils/cartStorage';
 import { ROUTES } from '../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
+import { type Order } from '../types/orderTypes';
+
+const ownerWhatsAppNumber = '972595769185';
 
 export function CartPage() {
   const navigate = useNavigate();
@@ -60,6 +63,9 @@ export function CartPage() {
       clearCart();
       setItems([]);
       setMessage(`تم إرسال الطلب ${response.data?.orderNumber ?? ''} بنجاح.`);
+      if (response.data) {
+        openOrderInWhatsApp(response.data);
+      }
       navigate(ROUTES.customerOrders);
     } catch (caughtError) {
       setError(extractError(caughtError));
@@ -132,4 +138,29 @@ function extractError(error: unknown): string {
   }
 
   return 'تعذر إرسال الطلب. حاول مرة أخرى.';
+}
+
+function openOrderInWhatsApp(order: Order) {
+  const itemsText = order.items
+    .map((item, index) => {
+      const customization = item.customizationSummary ? `\n   التخصيص: ${item.customizationSummary}` : '';
+      return `${index + 1}. ${item.productName} × ${item.quantity} - ${item.lineTotal.toLocaleString('ar')} شيكل${customization}`;
+    })
+    .join('\n');
+  const message = [
+    'طلب جديد من متجر Namira',
+    `رقم الطلب: ${order.orderNumber}`,
+    `الزبون: ${order.customerName || 'غير محدد'}`,
+    `الهاتف: ${order.customerPhoneNumber || 'غير محدد'}`,
+    `العنوان: ${order.shippingAddress || 'غير محدد'}`,
+    '',
+    'المنتجات:',
+    itemsText,
+    '',
+    `الإجمالي: ${order.total.toLocaleString('ar')} شيكل`,
+    order.notes ? `ملاحظات: ${order.notes}` : '',
+  ].filter(Boolean).join('\n');
+  const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+
+  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 }
