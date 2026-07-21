@@ -2,9 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/assets/resin-bon-logo.png" />
+    <link rel="icon" type="image/webp" href="/assets/resin-bon-logo.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resin Bon</title>
+    <script>
+      (function () {
+        var path = sessionStorage.getItem('resin-bon-spa-path');
+        if (path) {
+          sessionStorage.removeItem('resin-bon-spa-path');
+          window.history.replaceState(null, '', path);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

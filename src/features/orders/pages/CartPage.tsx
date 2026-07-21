@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../authentication/hooks/useAuth';
 import { createOrder } from '../services/orderApi';
@@ -11,8 +11,10 @@ const ownerWhatsAppNumber = '972595769185';
 
 export function CartPage() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [items, setItems] = useState(() => readCart());
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
@@ -20,19 +22,29 @@ export function CartPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [items]);
 
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setCustomerName((current) => current || `${user.firstName} ${user.lastName}`.trim());
+    setCustomerPhoneNumber((current) => current || user.phoneNumber);
+    setShippingAddress((current) => current || user.address);
+  }, [user]);
+
   function changeQuantity(cartItemId: string, quantity: number) {
     updateCartQuantity(cartItemId, quantity);
     setItems(readCart());
   }
 
   async function submitOrder() {
-    if (!isAuthenticated) {
-      navigate(ROUTES.login);
+    if (items.length === 0) {
+      setError('السلة فارغة.');
       return;
     }
 
-    if (items.length === 0) {
-      setError('السلة فارغة.');
+    if (!customerName.trim() || !customerPhoneNumber.trim() || !shippingAddress.trim()) {
+      setError('أكملي الاسم ورقم الهاتف وعنوان التوصيل قبل إرسال الطلب.');
       return;
     }
 
@@ -56,6 +68,8 @@ export function CartPage() {
           })),
           customRequest: item.customRequest,
         })),
+        customerName: customerName.trim(),
+        customerPhoneNumber: customerPhoneNumber.trim(),
         shippingAddress,
         notes,
       });
@@ -66,7 +80,9 @@ export function CartPage() {
       if (response.data) {
         openOrderInWhatsApp(response.data);
       }
-      navigate(ROUTES.customerOrders);
+      if (isAuthenticated) {
+        navigate(ROUTES.customerOrders);
+      }
     } catch (caughtError) {
       setError(extractError(caughtError));
     } finally {
@@ -81,10 +97,13 @@ export function CartPage() {
           <div>
             <p className="eyebrow">السلة</p>
             <h2>مراجعة الطلب</h2>
-            <p>راجعي المنتجات والتخصيصات قبل إرسال الطلب لصاحب المتجر.</p>
+            <p>راجعي المنتجات والتخصيصات، ثم أكملي معلومات التواصل لإرسال الطلب.</p>
           </div>
           <Link className="button button-secondary" to={ROUTES.products}>متابعة التسوق</Link>
         </section>
+
+        {message ? <div className="form-success cart-page-message">{message}</div> : null}
+        {error && items.length === 0 ? <div className="form-error cart-page-message">{error}</div> : null}
 
         {items.length === 0 ? (
           <p className="empty-state">السلة فارغة حاليا.</p>
@@ -107,9 +126,21 @@ export function CartPage() {
             <aside className="cart-summary">
               <h3>ملخص الطلب</h3>
               <strong>{total.toLocaleString('ar')} شيكل</strong>
+              <div className="cart-contact-box">
+                <span>{isAuthenticated ? 'معلومات الحساب' : 'طلب بدون حساب'}</span>
+                <p>{isAuthenticated ? 'يمكنك تعديل المعلومات لهذا الطلب فقط.' : 'لا تحتاجي تسجيل دخول، فقط اتركي معلومات التواصل.'}</p>
+              </div>
+              <label className="field admin-field">
+                اسم الزبون
+                <input value={customerName} placeholder="مثال: ميار أحمد" onChange={(event) => setCustomerName(event.target.value)} />
+              </label>
+              <label className="field admin-field">
+                رقم الهاتف
+                <input dir="ltr" value={customerPhoneNumber} placeholder="0590000000" onChange={(event) => setCustomerPhoneNumber(event.target.value)} />
+              </label>
               <label className="field admin-field">
                 عنوان التوصيل
-                <textarea rows={3} value={shippingAddress} placeholder="اتركه فارغا لاستخدام عنوان الحساب" onChange={(event) => setShippingAddress(event.target.value)} />
+                <textarea rows={3} value={shippingAddress} placeholder="المدينة، الشارع، وأي تفاصيل مهمة للتوصيل" onChange={(event) => setShippingAddress(event.target.value)} />
               </label>
               <label className="field admin-field">
                 ملاحظات

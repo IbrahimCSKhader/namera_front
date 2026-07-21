@@ -24,6 +24,8 @@ describe('order API service', () => {
   it('creates customer orders without owner-only fields', async () => {
     const request = {
       items: [{ productId: 'product-1', quantity: 2 }],
+      customerName: 'Guest Customer',
+      customerPhoneNumber: '0591234567',
       shippingAddress: 'Ramallah',
       notes: 'Gift wrap',
     };

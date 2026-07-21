@@ -2206,6 +2206,11 @@ img {
   align-items: start;
 }
 
+.cart-page-message {
+  width: min(100%, 720px);
+  margin-bottom: 18px;
+}
+
 .cart-items,
 .cart-summary,
 .chart-panel {
@@ -2277,6 +2282,27 @@ img {
 .cart-summary strong {
   color: var(--color-primary-dark);
   font-size: 28px;
+}
+
+.cart-contact-box {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  color: var(--color-primary-dark);
+  background: rgba(255, 219, 206, 0.34);
+  border: 1px solid rgba(216, 194, 187, 0.52);
+  border-radius: var(--radius-md);
+}
+
+.cart-contact-box span {
+  font-weight: 900;
+}
+
+.cart-contact-box p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .owner-order-filters {

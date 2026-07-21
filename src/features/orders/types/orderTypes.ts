@@ -60,6 +60,8 @@ export type CreateOrderRequest = {
     }>;
     customRequest?: string;
   }>;
+  customerName?: string;
+  customerPhoneNumber?: string;
   shippingAddress?: string;
   notes?: string;
 };
