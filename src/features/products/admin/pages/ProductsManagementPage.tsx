@@ -60,7 +60,7 @@ export function ProductsManagementPage() {
         <div>
           <p className="eyebrow">عرض المنتجات</p>
           <h2>قائمة المنتجات</h2>
-          <p>ابحثي، صفّي، وانشري أو أخفي المنتجات بسرعة.</p>
+          <p>ابحث، صف، وانشر أو أخف المنتجات بسرعة.</p>
         </div>
         <Link className="button button-primary" to={ROUTES.ownerAddProduct}>
           إضافة منتج جديد

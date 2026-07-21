@@ -95,5 +95,5 @@ function extractError(error: unknown): string {
     return ((error as { errors: string[] }).errors).join(' ');
   }
 
-  return 'تعذر حفظ المنتج. راجعي البيانات وحاولي مرة أخرى.';
+  return 'تعذر حفظ المنتج. راجع البيانات وحاول مرة أخرى.';
 }

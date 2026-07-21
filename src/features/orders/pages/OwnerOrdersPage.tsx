@@ -77,7 +77,7 @@ export function OwnerOrdersPage() {
       <section className="owner-page-heading">
         <p className="eyebrow">إدارة الطلبات</p>
         <h2>طلبات الزبائن</h2>
-        <p>تابعي طلبات الزبائن من لحظة الإرسال حتى التجهيز والتسليم.</p>
+        <p>تابع طلبات الزبائن من لحظة الإرسال حتى التجهيز والتسليم.</p>
       </section>
 
       <section className="owner-stats">

@@ -105,7 +105,7 @@ export function ProductsPage() {
       <section className="page-heading shop-heading">
         <p className="eyebrow">{BRAND.name}</p>
         <h1>{isCategoriesPage ? 'التصنيفات' : activeCategory ? activeCategory.name : 'المنتجات'}</h1>
-        <p>{isCategoriesPage ? 'اختاري التصنيف المناسب لعرض القطع المتاحة داخله.' : 'تظهر هنا المنتجات المنشورة والجاهزة للعرض في المتجر.'}</p>
+        <p>{isCategoriesPage ? 'اختر التصنيف المناسب لعرض القطع المتاحة داخله.' : 'تظهر هنا المنتجات المنشورة والجاهزة للعرض في المتجر.'}</p>
       </section>
 
       {isLoading ? (

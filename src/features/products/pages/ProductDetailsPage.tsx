@@ -164,7 +164,7 @@ export function ProductDetailsPage() {
     }
 
     if (!isAuthenticated && (!reviewCustomerName.trim() || !reviewCustomerPhoneNumber.trim())) {
-      setReviewError('اكتبي الاسم ورقم الهاتف قبل إرسال التقييم.');
+      setReviewError('اكتب الاسم ورقم الهاتف قبل إرسال التقييم.');
       return;
     }
 
@@ -281,7 +281,7 @@ export function ProductDetailsPage() {
             <section className="product-custom-request-list">
               <div>
                 <span>طلبات تخصيص إضافية من عندك</span>
-                <small>أضيفي كل فكرة أو ملاحظة كنقطة منفصلة، ويمكن إرفاق صورة مع كل نقطة.</small>
+                <small>أضف كل فكرة أو ملاحظة كنقطة منفصلة، ويمكن إرفاق صورة مع كل نقطة.</small>
               </div>
               {customRequestItems.map((item, index) => (
                 <div className="custom-request-item" key={item.id}>
@@ -392,7 +392,7 @@ function CustomizationFieldControl({
   if (field.type === 'singleSelect') {
     return (
       <select value={selectedChoiceIds[0] ?? ''} onChange={(event) => onChange({ selectedChoiceIds: event.target.value ? [event.target.value] : [], value: event.target.value })}>
-        <option value="">اختاري خيار</option>
+        <option value="">اختر خيار</option>
         {field.choices.map((choice) => (
           <option key={choice.id} value={choice.id}>{choice.label}{choice.additionalPrice > 0 ? ` + ${choice.additionalPrice} شيكل` : ''}</option>
         ))}
@@ -533,7 +533,7 @@ function validateProductSelection(
 
   product.optionGroups.forEach((group) => {
     if (group.isRequired && !selectedOptionIds[group.id]) {
-      errors.push(`اختاري ${group.name}.`);
+      errors.push(`اختر ${group.name}.`);
     }
   });
 

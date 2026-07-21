@@ -75,7 +75,7 @@ export function EditProductPage() {
       setDraft(saved);
       setMessage('تم تحديث المنتج بنجاح.');
     } catch {
-      setMessage('تعذر تحديث المنتج. راجعي البيانات وحاولي مرة أخرى.');
+      setMessage('تعذر تحديث المنتج. راجع البيانات وحاول مرة أخرى.');
     } finally {
       setIsSaving(false);
     }

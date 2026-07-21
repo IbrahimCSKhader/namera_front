@@ -44,7 +44,7 @@ export function CartPage() {
     }
 
     if (!customerName.trim() || !customerPhoneNumber.trim() || !shippingAddress.trim()) {
-      setError('أكملي الاسم ورقم الهاتف وعنوان التوصيل قبل إرسال الطلب.');
+      setError('أكمل الاسم ورقم الهاتف وعنوان التوصيل قبل إرسال الطلب.');
       return;
     }
 
@@ -101,7 +101,7 @@ export function CartPage() {
           <div>
             <p className="eyebrow">السلة</p>
             <h2>مراجعة الطلب</h2>
-            <p>راجعي المنتجات والتخصيصات، ثم أكملي معلومات التواصل لإرسال الطلب.</p>
+            <p>راجع المنتجات والتخصيصات، ثم أكمل معلومات التواصل لإرسال الطلب.</p>
           </div>
           <Link className="button button-secondary" to={ROUTES.products}>متابعة التسوق</Link>
         </section>
@@ -132,7 +132,7 @@ export function CartPage() {
               <strong>{total.toLocaleString('ar')} شيكل</strong>
               <div className="cart-contact-box">
                 <span>{isAuthenticated ? 'معلومات الحساب' : 'طلب بدون حساب'}</span>
-                <p>{isAuthenticated ? 'يمكنك تعديل المعلومات لهذا الطلب فقط.' : 'لا تحتاجي تسجيل دخول، فقط اتركي معلومات التواصل.'}</p>
+                <p>{isAuthenticated ? 'يمكن تعديل المعلومات لهذا الطلب فقط.' : 'لا يحتاج الطلب إلى تسجيل دخول، فقط اترك معلومات التواصل.'}</p>
               </div>
               <label className="field admin-field">
                 اسم الزبون

@@ -96,7 +96,7 @@ export function ProductForm({
 
       {Object.keys(errors).length > 0 ? (
         <div className="form-error validation-summary" role="alert">
-          <p>راجعي الحقول التالية قبل الحفظ:</p>
+          <p>راجع الحقول التالية قبل الحفظ:</p>
           <ul>
             {Object.values(errors)
               .flat()
@@ -158,7 +158,7 @@ function BasicInfoSection({
           </Field>
           <Field label="التصنيف" error={errors?.categoryId?.[0]}>
             <select value={draft.categoryId} onChange={(event) => update('categoryId', event.target.value)}>
-              <option value="">اختاري التصنيف</option>
+              <option value="">اختر التصنيف</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -449,7 +449,7 @@ function CustomizationSection({ draft, onChange }: SectionProps & { onChange: (d
                 <input min="0" type="number" value={field.additionalPrice} onChange={(event) => updateField(index, { ...field, additionalPrice: Number(event.target.value) })} />
               </Field>
               <Field label="خيارات القائمة">
-                <input value={field.choiceLabels.join(', ')} placeholder="اكتبي الخيارات مفصولة بفواصل" onChange={(event) => updateField(index, { ...field, choiceLabels: event.target.value.split(',').map((item) => item.trim()).filter(Boolean) })} />
+                <input value={field.choiceLabels.join(', ')} placeholder="اكتب الخيارات مفصولة بفواصل" onChange={(event) => updateField(index, { ...field, choiceLabels: event.target.value.split(',').map((item) => item.trim()).filter(Boolean) })} />
               </Field>
             </div>
             <Field label="تعليمات للعميل">

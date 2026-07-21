@@ -91,7 +91,7 @@ function ProductViewer({ products }: { products: Product[] }) {
   return (
     <section className="product-viewer-section" aria-label="مختارات المنتجات">
       <div className="shop-section-heading">
-        <h2>اختاري منتجك</h2>
+        <h2>اختر المنتج</h2>
         <Link to={ROUTES.products}>عرض الكل</Link>
       </div>
       <div className="product-viewer" dir="ltr">

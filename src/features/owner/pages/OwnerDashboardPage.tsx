@@ -37,9 +37,9 @@ export function OwnerDashboardPage() {
     <OwnerLayout>
       <section className="dashboard-hero owner-dashboard-hero">
         <div>
-          <p className="eyebrow">لوحة صاحبة المتجر</p>
+          <p className="eyebrow">لوحة صاحب المتجر</p>
           <h2>أهلا {user?.firstName}، المتجر تحت السيطرة</h2>
-          <p>تابعي الطلبات، العملاء، المنتجات، والإيراد من شاشة واحدة مرتبطة بالبيانات الفعلية.</p>
+          <p>تابع الطلبات، العملاء، المنتجات، والإيراد من شاشة واحدة مرتبطة بالبيانات الفعلية.</p>
         </div>
         <Link className="button button-primary" to={ROUTES.ownerOrders}>
           إدارة الطلبات

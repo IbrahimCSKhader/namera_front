@@ -144,7 +144,7 @@ export function CategoriesManagementPage() {
         <div>
           <p className="eyebrow">إدارة المنتجات</p>
           <h2>إدارة التصنيفات</h2>
-          <p>أضيفي وعدّلي ورتّبي التصنيفات التي تظهر في المتجر، وتابعي عدد المنتجات المرتبطة بكل تصنيف.</p>
+          <p>أضف وعدل ورتب التصنيفات التي تظهر في المتجر، وتابع عدد المنتجات المرتبطة بكل تصنيف.</p>
         </div>
         {editingId ? (
           <button className="button button-secondary" type="button" onClick={resetForm}>

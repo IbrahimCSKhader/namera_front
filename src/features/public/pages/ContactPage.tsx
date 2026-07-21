@@ -12,7 +12,7 @@ const contactLinks = [
   {
     label: 'Instagram',
     username: '@resin.bon',
-    description: 'تابعي أحدث التصاميم والقطع الجاهزة للإلهام.',
+    description: 'تابع أحدث التصاميم والقطع الجاهزة للإلهام.',
     href: 'https://www.instagram.com/resin.bon',
     className: 'instagram',
     Icon: InstagramIcon,
@@ -24,15 +24,15 @@ export function ContactPage() {
     <main className="contact-page">
       <section className="contact-hero">
         <p className="eyebrow">{BRAND.name}</p>
-        <h1>تواصلي معنا</h1>
-        <p>اختاري الطريقة الأنسب، وابعثي تفاصيل القطعة أو المناسبة لنساعدك نرتب الطلب بالشكل المناسب.</p>
+        <h1>تواصل معنا</h1>
+        <p>اختر الطريقة الأنسب، وأرسل تفاصيل القطعة أو المناسبة لنرتب الطلب بالشكل المناسب.</p>
       </section>
 
       <section className="contact-card">
         <div className="contact-card-copy">
           <span>معلومات التواصل</span>
           <h2>نرد عليك بأقرب وقت</h2>
-          <p>للطلبات المخصصة، الصور، الألوان، والتغليف، أرسلي لنا الفكرة أو صورة مرجعية وسنرتب التفاصيل معك.</p>
+          <p>للطلبات المخصصة، الصور، الألوان، والتغليف، أرسل الفكرة أو صورة مرجعية وسنرتب التفاصيل معك.</p>
         </div>
 
         <div className="contact-link-grid">
