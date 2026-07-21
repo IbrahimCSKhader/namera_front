@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { BRAND } from '../../../shared/constants/brand';
 import { ROUTES } from '../../../shared/constants/routes';
+import { Pagination, paginateItems } from '../../../shared/components/ui/Pagination';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 import { ProductCard } from '../components/ProductCard';
 import * as productApi from '../services/productApi';
@@ -14,7 +15,9 @@ export function ProductsPage() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [page, setPage] = useState(1);
   const isCategoriesPage = location.pathname === ROUTES.categories;
+  const pageSize = isCategoriesPage ? 9 : 12;
 
   useEffect(() => {
     async function loadStorefront() {
@@ -52,6 +55,12 @@ export function ProductsPage() {
   }, [products, searchParams]);
 
   const activeCategory = categories.find((category) => category.id === searchParams.get('category'));
+  const visibleProducts = paginateItems(filteredProducts, page, pageSize);
+  const visibleCategories = paginateItems(categories, page, pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [isCategoriesPage, searchParams]);
 
   return (
     <main className="shop-page">
@@ -66,15 +75,19 @@ export function ProductsPage() {
       ) : loadError ? (
         <p className="empty-state">{loadError}</p>
       ) : isCategoriesPage ? (
-        <CategoriesGrid categories={categories} />
+        <>
+          <CategoriesGrid categories={visibleCategories} />
+          <Pagination page={page} pageSize={pageSize} totalItems={categories.length} onPageChange={setPage} />
+        </>
       ) : filteredProducts.length > 0 ? (
         <>
           <CategoryFilter activeCategoryId={activeCategory?.id ?? ''} categories={categories} />
           <div className="shop-product-grid">
-            {filteredProducts.map((product) => (
+            {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+          <Pagination page={page} pageSize={pageSize} totalItems={filteredProducts.length} onPageChange={setPage} />
         </>
       ) : (
         <p className="empty-state">{activeCategory ? 'لا توجد منتجات منشورة داخل هذا التصنيف حاليا.' : 'لا توجد منتجات منشورة حاليا.'}</p>
@@ -90,8 +103,8 @@ function CategoriesGrid({ categories }: { categories: ProductCategory[] }) {
 
   return (
     <div className="shop-category-grid public-category-list">
-      {categories.map((category, index) => (
-        <Link className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
+      {categories.map((category) => (
+        <Link className="shop-category-card" key={category.id} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
           {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <div className="shop-category-placeholder" />}
           <div>
             <h3>{category.name}</h3>

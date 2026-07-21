@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { OwnerLayout } from '../../../../shared/components/layout/OwnerLayout';
+import { Pagination, paginateItems } from '../../../../shared/components/ui/Pagination';
 import { ROUTES } from '../../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../../shared/utils/mediaUrl';
 import { getCategories } from '../../services/productApi';
@@ -15,6 +16,8 @@ export function ProductsManagementPage() {
   const [categoryId, setCategoryId] = useState('');
   const [status, setStatus] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     void load();
@@ -28,6 +31,7 @@ export function ProductsManagementPage() {
     ]);
     setProducts(productsResponse);
     setCategories(categoriesResponse.data ?? []);
+    setPage(1);
     setIsLoading(false);
   }
 
@@ -48,6 +52,7 @@ export function ProductsManagementPage() {
       customized: products.filter((product) => product.customizationLabel === 'نعم').length,
     };
   }, [products]);
+  const visibleProducts = useMemo(() => paginateItems(products, page, pageSize), [products, page, pageSize]);
 
   return (
     <OwnerLayout>
@@ -106,7 +111,7 @@ export function ProductsManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {visibleProducts.map((product) => (
                 <tr key={product.id}>
                   <td>{product.primaryImageUrl ? <img className="table-thumb" src={resolveMediaUrl(product.primaryImageUrl)} alt={product.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}</td>
                   <td>{product.name}</td>
@@ -132,6 +137,7 @@ export function ProductsManagementPage() {
               ))}
             </tbody>
           </table>
+          <Pagination page={page} pageSize={pageSize} totalItems={products.length} onPageChange={setPage} />
         </div>
       )}
     </OwnerLayout>

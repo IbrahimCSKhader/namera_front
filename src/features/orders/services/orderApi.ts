@@ -8,11 +8,34 @@ import {
   type OwnerDashboardStats,
 } from '../types/orderTypes';
 
+type UploadedMediaResponse = {
+  url: string;
+  fileName: string;
+  size: number;
+};
+
 export function createOrder(request: CreateOrderRequest): Promise<ApiResponse<Order>> {
   return apiClient<ApiResponse<Order>>('/customer/orders', {
     method: 'POST',
     body: request,
   });
+}
+
+export async function uploadOrderCustomizationImage(file: File): Promise<UploadedMediaResponse> {
+  const formData = new FormData();
+  formData.set('file', file);
+
+  const response = await apiClient<ApiResponse<UploadedMediaResponse>>('/customer/orders/uploads/customization-image', {
+    method: 'POST',
+    body: formData,
+    requiresAuth: false,
+  });
+
+  if (!response.data) {
+    throw new Error('لم يتم رفع صورة التخصيص');
+  }
+
+  return response.data;
 }
 
 export function getMyOrders(): Promise<ApiResponse<Order[]>> {

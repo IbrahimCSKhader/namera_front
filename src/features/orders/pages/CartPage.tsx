@@ -67,6 +67,10 @@ export function CartPage() {
             selectedChoiceIds: field.selectedChoiceIds,
           })),
           customRequest: item.customRequest,
+          customRequestItems: item.customRequestItems.map((requestItem) => ({
+            text: requestItem.text,
+            imageUrl: requestItem.imageUrl,
+          })),
         })),
         customerName: customerName.trim(),
         customerPhoneNumber: customerPhoneNumber.trim(),

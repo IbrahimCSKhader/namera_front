@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CustomerLayout } from '../../../shared/components/layout/CustomerLayout';
+import { Pagination, paginateItems } from '../../../shared/components/ui/Pagination';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 import { getMyOrders } from '../services/orderApi';
 import { type Order } from '../types/orderTypes';
@@ -8,6 +9,9 @@ export function CustomerOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
+  const visibleOrders = paginateItems(orders, page, pageSize);
 
   useEffect(() => {
     async function loadOrders() {
@@ -40,7 +44,7 @@ export function CustomerOrdersPage() {
         <p className="empty-state">لا توجد طلبات حتى الآن.</p>
       ) : (
         <div className="orders-list">
-          {orders.map((order) => (
+          {visibleOrders.map((order) => (
             <article className="order-card" key={order.id}>
               <header>
                 <div>
@@ -63,6 +67,7 @@ export function CustomerOrdersPage() {
               {order.ownerNote ? <p className="order-note">{order.ownerNote}</p> : null}
             </article>
           ))}
+          <Pagination page={page} pageSize={pageSize} totalItems={orders.length} onPageChange={setPage} />
         </div>
       )}
     </CustomerLayout>

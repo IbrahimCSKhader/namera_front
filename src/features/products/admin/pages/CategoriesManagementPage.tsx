@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { OwnerLayout } from '../../../../shared/components/layout/OwnerLayout';
+import { Pagination, paginateItems } from '../../../../shared/components/ui/Pagination';
 import { resolveMediaUrl } from '../../../../shared/utils/mediaUrl';
 import {
   type AdminProductCategory,
@@ -30,6 +31,8 @@ export function CategoriesManagementPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     void loadCategories();
@@ -42,11 +45,13 @@ export function CategoriesManagementPage() {
       visibleProducts: categories.reduce((total, category) => total + category.visibleProductsCount, 0),
     };
   }, [categories]);
+  const visibleCategories = useMemo(() => paginateItems(categories, page, pageSize), [categories, page, pageSize]);
 
   async function loadCategories() {
     setIsLoading(true);
     try {
       setCategories(await getAdminCategories());
+      setPage(1);
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +223,7 @@ export function CategoriesManagementPage() {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => (
+              {visibleCategories.map((category) => (
                 <tr key={category.id}>
                   <td>
                     {category.imageUrl ? <img className="table-thumb" src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}
@@ -246,6 +251,7 @@ export function CategoriesManagementPage() {
               ))}
             </tbody>
           </table>
+          <Pagination page={page} pageSize={pageSize} totalItems={categories.length} onPageChange={setPage} />
         </div>
       )}
     </OwnerLayout>

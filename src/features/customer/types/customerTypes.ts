@@ -65,4 +65,6 @@ export type CustomerReviewRequest = {
   productId: string;
   rating: number;
   comment: string;
+  customerName?: string;
+  customerPhoneNumber?: string;
 };

@@ -20,6 +20,11 @@ export type CartCustomizationField = {
   additionalPrice: number;
 };
 
+export type CartCustomRequestItem = {
+  text: string;
+  imageUrl?: string;
+};
+
 export type CartItem = {
   cartItemId: string;
   productId: string;
@@ -31,6 +36,7 @@ export type CartItem = {
   selectedOptions: CartCustomizationOption[];
   customFields: CartCustomizationField[];
   customRequest: string;
+  customRequestItems: CartCustomRequestItem[];
   customizationSummary: string;
 };
 
@@ -54,6 +60,7 @@ export function readCart(): CartItem[] {
         selectedOptions: item.selectedOptions ?? [],
         customFields: item.customFields ?? [],
         customRequest: item.customRequest ?? '',
+        customRequestItems: item.customRequestItems ?? [],
         customizationSummary: item.customizationSummary ?? '',
       }));
   } catch {
@@ -77,6 +84,7 @@ export function addProductToCart(
     selectedOptions?: CartCustomizationOption[];
     customFields?: CartCustomizationField[];
     customRequest?: string;
+    customRequestItems?: CartCustomRequestItem[];
     unitPrice?: number;
     customizationSummary?: string;
   } = {},
@@ -86,8 +94,11 @@ export function addProductToCart(
   const selectedOptions = options.selectedOptions ?? [];
   const customFields = options.customFields ?? [];
   const customRequest = (options.customRequest ?? '').trim();
-  const customizationSummary = options.customizationSummary ?? buildCustomizationSummary(selectedOptions, customFields, customRequest);
-  const cartItemId = createCartItemId(product.id, selectedOptions, customFields, customRequest);
+  const customRequestItems = (options.customRequestItems ?? [])
+    .map((item) => ({ text: item.text.trim(), imageUrl: item.imageUrl?.trim() ?? '' }))
+    .filter((item) => item.text || item.imageUrl);
+  const customizationSummary = options.customizationSummary ?? buildCustomizationSummary(selectedOptions, customFields, customRequest, customRequestItems);
+  const cartItemId = createCartItemId(product.id, selectedOptions, customFields, customRequest, customRequestItems);
   const existing = items.find((item) => item.cartItemId === cartItemId);
   const quantity = Math.max(1, options.quantity ?? 1);
 
@@ -105,6 +116,7 @@ export function addProductToCart(
       selectedOptions,
       customFields,
       customRequest,
+      customRequestItems,
       customizationSummary,
     });
   }
@@ -128,10 +140,12 @@ function buildCustomizationSummary(
   selectedOptions: CartCustomizationOption[],
   customFields: CartCustomizationField[],
   customRequest: string,
+  customRequestItems: CartCustomRequestItem[],
 ) {
   const parts = [
     ...selectedOptions.map((option) => `${option.groupName}: ${option.valueLabel}`),
     ...customFields.filter((field) => field.displayValue).map((field) => `${field.fieldLabel}: ${field.displayValue}`),
+    ...customRequestItems.map((item, index) => `طلب خاص ${index + 1}: ${item.text || 'صورة مرفقة'}${item.imageUrl ? ' + صورة' : ''}`),
   ];
 
   if (customRequest) {
@@ -146,12 +160,14 @@ function createCartItemId(
   selectedOptions: CartCustomizationOption[],
   customFields: CartCustomizationField[],
   customRequest: string,
+  customRequestItems: CartCustomRequestItem[],
 ) {
   const signature = JSON.stringify({
     productId,
     selectedOptions: selectedOptions.map((option) => [option.groupId, option.valueId]).sort(),
     customFields: customFields.map((field) => [field.fieldId, field.value, field.selectedChoiceIds.slice().sort()]).sort(),
     customRequest,
+    customRequestItems: customRequestItems.map((item) => [item.text, item.imageUrl ?? '']),
   });
 
   let hash = 0;

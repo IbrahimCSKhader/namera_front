@@ -1,8 +1,9 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../../authentication/hooks/useAuth';
 import { saveReview } from '../../customer/services/customerApi';
-import { addProductToCart, type CartCustomizationField, type CartCustomizationOption } from '../../orders/utils/cartStorage';
+import { uploadOrderCustomizationImage } from '../../orders/services/orderApi';
+import { addProductToCart, type CartCustomizationField, type CartCustomizationOption, type CartCustomRequestItem } from '../../orders/utils/cartStorage';
 import { ROUTES } from '../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 import * as productApi from '../services/productApi';
@@ -13,18 +14,25 @@ type FieldValue = {
   selectedChoiceIds: string[];
 };
 
+type CustomRequestPoint = CartCustomRequestItem & {
+  id: string;
+  isUploading?: boolean;
+};
+
 export function ProductDetailsPage() {
   const { slug = '' } = useParams();
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [fieldValues, setFieldValues] = useState<Record<string, FieldValue>>({});
-  const [customRequest, setCustomRequest] = useState('');
+  const [customRequest] = useState('');
+  const [customRequestItems, setCustomRequestItems] = useState<CustomRequestPoint[]>(() => [createCustomRequestPoint()]);
   const [quantity, setQuantity] = useState(1);
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(6);
   const [reviewComment, setReviewComment] = useState('');
+  const [reviewCustomerName, setReviewCustomerName] = useState('');
+  const [reviewCustomerPhoneNumber, setReviewCustomerPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isReviewSubmitting, setIsReviewSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -58,13 +66,22 @@ export function ProductDetailsPage() {
     void loadProduct();
   }, [slug]);
 
-  const selection = useMemo(() => {
-    if (!product) {
-      return { options: [], fields: [], unitPrice: 0, summary: '' };
+  useEffect(() => {
+    if (!user) {
+      return;
     }
 
-    return buildSelection(product, selectedOptions, fieldValues, customRequest);
-  }, [product, selectedOptions, fieldValues, customRequest]);
+    setReviewCustomerName((current) => current || `${user.firstName} ${user.lastName}`.trim());
+    setReviewCustomerPhoneNumber((current) => current || user.phoneNumber);
+  }, [user]);
+
+  const selection = useMemo(() => {
+    if (!product) {
+      return { options: [], fields: [], customRequestItems: [], unitPrice: 0, summary: '' };
+    }
+
+    return buildSelection(product, selectedOptions, fieldValues, customRequest, customRequestItems);
+  }, [product, selectedOptions, fieldValues, customRequest, customRequestItems]);
 
   function updateFieldValue(fieldId: string, value: Partial<FieldValue>) {
     setFieldValues((current) => ({
@@ -74,6 +91,38 @@ export function ProductDetailsPage() {
         selectedChoiceIds: value.selectedChoiceIds ?? current[fieldId]?.selectedChoiceIds ?? [],
       },
     }));
+  }
+
+  function updateCustomRequestPoint(id: string, value: Partial<CartCustomRequestItem>) {
+    setCustomRequestItems((current) => current.map((item) => (item.id === id ? { ...item, ...value } : item)));
+  }
+
+  function addCustomRequestPoint() {
+    setCustomRequestItems((current) => [...current, createCustomRequestPoint()]);
+  }
+
+  function removeCustomRequestPoint(id: string) {
+    setCustomRequestItems((current) => {
+      const nextItems = current.filter((item) => item.id !== id);
+      return nextItems.length > 0 ? nextItems : [createCustomRequestPoint()];
+    });
+  }
+
+  async function uploadCustomRequestImage(id: string, file?: File) {
+    if (!file) {
+      return;
+    }
+
+    setCustomRequestItems((current) => current.map((item) => (item.id === id ? { ...item, isUploading: true } : item)));
+    try {
+      const uploaded = await uploadOrderCustomizationImage(file);
+      updateCustomRequestPoint(id, { imageUrl: uploaded.url });
+      setError('');
+    } catch (caughtError) {
+      setError(extractError(caughtError));
+    } finally {
+      setCustomRequestItems((current) => current.map((item) => (item.id === id ? { ...item, isUploading: false } : item)));
+    }
   }
 
   function handleAddToCart() {
@@ -99,6 +148,7 @@ export function ProductDetailsPage() {
       selectedOptions: selection.options,
       customFields: selection.fields,
       customRequest,
+      customRequestItems: selection.customRequestItems,
       unitPrice: selection.unitPrice,
       customizationSummary: selection.summary,
     });
@@ -113,8 +163,8 @@ export function ProductDetailsPage() {
       return;
     }
 
-    if (!isAuthenticated) {
-      navigate(ROUTES.login);
+    if (!isAuthenticated && (!reviewCustomerName.trim() || !reviewCustomerPhoneNumber.trim())) {
+      setReviewError('اكتبي الاسم ورقم الهاتف قبل إرسال التقييم.');
       return;
     }
 
@@ -123,10 +173,16 @@ export function ProductDetailsPage() {
     setReviewMessage('');
 
     try {
-      await saveReview({ productId: product.id, rating, comment: reviewComment });
+      await saveReview({
+        productId: product.id,
+        rating,
+        comment: reviewComment,
+        customerName: reviewCustomerName.trim(),
+        customerPhoneNumber: reviewCustomerPhoneNumber.trim(),
+      });
       setReviewMessage('تم حفظ تقييمك. سيظهر للزوار بعد مراجعة صاحب المتجر.');
       setReviewComment('');
-      setRating(5);
+      setRating(6);
     } catch (caughtError) {
       setReviewError(extractError(caughtError));
     } finally {
@@ -222,11 +278,28 @@ export function ProductDetailsPage() {
               </label>
             ))}
 
-            <label className="field admin-field product-custom-field">
-              <span>طلب تخصيص إضافي من عندك</span>
-              <small>اكتب أي لون، اسم، تاريخ، فكرة، أو تفصيل غير موجود ضمن الخيارات المحددة.</small>
-              <textarea rows={4} value={customRequest} placeholder="مثال: بدي الاسم بخط ناعم وبألوان هادئة" onChange={(event) => setCustomRequest(event.target.value)} />
-            </label>
+            <section className="product-custom-request-list">
+              <div>
+                <span>طلبات تخصيص إضافية من عندك</span>
+                <small>أضيفي كل فكرة أو ملاحظة كنقطة منفصلة، ويمكن إرفاق صورة مع كل نقطة.</small>
+              </div>
+              {customRequestItems.map((item, index) => (
+                <div className="custom-request-item" key={item.id}>
+                  <label className="field admin-field">
+                    نقطة {index + 1}
+                    <textarea rows={3} value={item.text} placeholder="مثال: الاسم بخط ناعم، أو صورة مرجعية للّون" onChange={(event) => updateCustomRequestPoint(item.id, { text: event.target.value })} />
+                  </label>
+                  <label className="file-picker-inline custom-request-file">
+                    رفع صورة
+                    <input accept="image/*" type="file" onChange={(event) => void uploadCustomRequestImage(item.id, event.target.files?.[0])} />
+                    <span>{item.isUploading ? 'جاري الرفع...' : item.imageUrl ? 'تم رفع الصورة' : 'اختيار صورة'}</span>
+                  </label>
+                  {item.imageUrl ? <img className="custom-request-preview" src={resolveMediaUrl(item.imageUrl)} alt={`تخصيص ${index + 1}`} loading="lazy" decoding="async" /> : null}
+                  <button className="text-button danger" type="button" onClick={() => removeCustomRequestPoint(item.id)}>حذف النقطة</button>
+                </div>
+              ))}
+              <button className="button button-secondary" type="button" onClick={addCustomRequestPoint}>إضافة نقطة</button>
+            </section>
           </section>
 
           <section className="product-purchase-box">
@@ -264,25 +337,36 @@ export function ProductDetailsPage() {
         <form className="customer-panel form-stack" onSubmit={handleReviewSubmit}>
           {reviewError ? <div className="form-error">{reviewError}</div> : null}
           {reviewMessage ? <div className="form-success">{reviewMessage}</div> : null}
-          <label className="field admin-field">
-            التقييم
-            <select value={rating} onChange={(event) => setRating(Number(event.target.value))}>
-              {[5, 4, 3, 2, 1].map((value) => (
-                <option key={value} value={value}>{value} / 5</option>
+          {!isAuthenticated ? (
+            <div className="form-grid">
+              <label className="field admin-field">
+                الاسم
+                <input value={reviewCustomerName} onChange={(event) => setReviewCustomerName(event.target.value)} />
+              </label>
+              <label className="field admin-field">
+                رقم الهاتف
+                <input dir="ltr" value={reviewCustomerPhoneNumber} onChange={(event) => setReviewCustomerPhoneNumber(event.target.value)} />
+              </label>
+            </div>
+          ) : null}
+          <div className="rose-rating-field">
+            <span>التقييم</span>
+            <div className="rose-rating-options" role="radiogroup" aria-label="التقييم بالورود">
+              {[0, 1, 2, 3, 4, 5, 6].map((value) => (
+                <button className={rating === value ? 'active' : ''} key={value} type="button" aria-pressed={rating === value} onClick={() => setRating(value)}>
+                  <span>{value === 0 ? '0' : 'وردة'.repeat(value)}</span>
+                  <small>{value}</small>
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
           <label className="field admin-field">
             ملاحظتك
             <textarea rows={4} value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} />
           </label>
-          {isAuthenticated ? (
-            <button className="button button-primary" type="submit" disabled={isReviewSubmitting || !reviewComment.trim()}>
-              {isReviewSubmitting ? 'جار الحفظ...' : 'حفظ التقييم'}
-            </button>
-          ) : (
-            <Link className="button button-primary" to={ROUTES.login}>تسجيل الدخول للتقييم</Link>
-          )}
+          <button className="button button-primary" type="submit" disabled={isReviewSubmitting || !reviewComment.trim()}>
+            {isReviewSubmitting ? 'جار الحفظ...' : 'حفظ التقييم'}
+          </button>
         </form>
       </section>
     </main>
@@ -385,6 +469,7 @@ function buildSelection(
   selectedOptionIds: Record<string, string>,
   fieldValues: Record<string, FieldValue>,
   customRequest: string,
+  customRequestItems: CustomRequestPoint[],
 ) {
   const options = product.optionGroups.flatMap<CartCustomizationOption>((group) => {
     const value = group.values.find((item) => item.id === selectedOptionIds[group.id]);
@@ -426,13 +511,17 @@ function buildSelection(
   const unitPrice = (product.basePrice ?? 0)
     + options.reduce((sum, option) => sum + option.extraPrice, 0)
     + fields.reduce((sum, field) => sum + field.additionalPrice, 0);
+  const requestItems = customRequestItems
+    .map((item) => ({ text: item.text.trim(), imageUrl: item.imageUrl?.trim() ?? '' }))
+    .filter((item) => item.text || item.imageUrl);
   const summary = [
     ...options.map((option) => `${option.groupName}: ${option.valueLabel}`),
     ...fields.map((field) => `${field.fieldLabel}: ${field.displayValue}`),
     customRequest.trim() ? `طلب خاص: ${customRequest.trim()}` : '',
+    ...requestItems.map((item, index) => `طلب خاص ${index + 1}: ${item.text || 'صورة مرفقة'}${item.imageUrl ? ' + صورة' : ''}`),
   ].filter(Boolean).join(' | ');
 
-  return { options, fields, unitPrice, summary };
+  return { options, fields, customRequestItems: requestItems, unitPrice, summary };
 }
 
 function validateProductSelection(
@@ -466,6 +555,14 @@ function validateProductSelection(
   });
 
   return errors;
+}
+
+function createCustomRequestPoint(): CustomRequestPoint {
+  return {
+    id: `custom-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    text: '',
+    imageUrl: '',
+  };
 }
 
 function extractError(error: unknown): string {

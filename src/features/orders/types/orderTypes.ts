@@ -59,6 +59,10 @@ export type CreateOrderRequest = {
       selectedChoiceIds?: string[];
     }>;
     customRequest?: string;
+    customRequestItems?: Array<{
+      text: string;
+      imageUrl?: string;
+    }>;
   }>;
   customerName?: string;
   customerPhoneNumber?: string;

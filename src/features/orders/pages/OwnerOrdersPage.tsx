@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { OwnerLayout } from '../../../shared/components/layout/OwnerLayout';
+import { Pagination, paginateItems } from '../../../shared/components/ui/Pagination';
 import { getOwnerOrders, updateOrderStatus } from '../services/orderApi';
 import { type Order, type OrderStatus } from '../types/orderTypes';
 
@@ -27,6 +28,8 @@ export function OwnerOrdersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     void loadOrders();
@@ -42,6 +45,7 @@ export function OwnerOrdersPage() {
     try {
       const response = await getOwnerOrders({ status, search });
       setOrders(response.data ?? []);
+      setPage(1);
     } catch {
       setError('تعذر تحميل الطلبات.');
     } finally {
@@ -66,6 +70,7 @@ export function OwnerOrdersPage() {
     pending: orders.filter((order) => order.status === 'pending').length,
     active: orders.filter((order) => !['completed', 'cancelled', 'rejected'].includes(order.status)).length,
   }), [orders]);
+  const visibleOrders = useMemo(() => paginateItems(orders, page, pageSize), [orders, page, pageSize]);
 
   return (
     <OwnerLayout>
@@ -117,7 +122,7 @@ export function OwnerOrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {visibleOrders.map((order) => (
                 <tr key={order.id}>
                   <td>
                     <strong>{order.orderNumber}</strong>
@@ -148,6 +153,7 @@ export function OwnerOrdersPage() {
               ))}
             </tbody>
           </table>
+          <Pagination page={page} pageSize={pageSize} totalItems={orders.length} onPageChange={setPage} />
         </div>
       )}
     </OwnerLayout>

@@ -50,9 +50,9 @@ export function HomePage() {
           <Link to={ROUTES.categories}>عرض الكل</Link>
         </div>
         {categories.length > 0 ? (
-          <div className="shop-category-grid">
-            {categories.slice(0, 5).map((category, index) => (
-              <Link className={index === 0 ? 'shop-category-card featured' : 'shop-category-card'} key={category.slug} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
+          <div className="shop-category-grid home-category-grid">
+            {categories.slice(0, 6).map((category) => (
+              <Link className="shop-category-card" key={category.slug} to={`${ROUTES.products}?category=${encodeURIComponent(category.id)}`}>
                 {category.imageUrl ? <img src={resolveMediaUrl(category.imageUrl)} alt={category.name} loading="lazy" decoding="async" /> : <div className="shop-category-placeholder" />}
                 <div>
                   <h3>{category.name}</h3>
