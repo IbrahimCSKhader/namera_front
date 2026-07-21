@@ -18,6 +18,7 @@ export function PublicLayout({ title, subtitle, sideTitle, children }: PublicLay
       </section>
       <section className="auth-shell">
         <aside className="auth-art" aria-hidden="true">
+          <img src={BRAND.coverUrl} alt="" />
           <span>{sideTitle}</span>
         </aside>
         <section className="auth-card">

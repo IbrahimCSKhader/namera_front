@@ -15,7 +15,7 @@ export function validateProductDraft(draft: ProductDraft): ProductValidationResu
   validateCategory(draft, errors);
   validateImages(draft, errors);
   validatePricing(draft, errors);
-  validateInventory(draft, errors);
+  validateOrderQuantityLimits(draft, errors);
   validatePreparation(draft, errors);
   validateVisibility(draft, errors);
   validateOptionGroups(draft.optionGroups, errors);
@@ -82,27 +82,13 @@ function validatePricing(draft: ProductDraft, errors: ProductFieldErrors) {
   }
 }
 
-function validateInventory(draft: ProductDraft, errors: ProductFieldErrors) {
+function validateOrderQuantityLimits(draft: ProductDraft, errors: ProductFieldErrors) {
   if (draft.minOrderQuantity < 1) {
     addError(errors, 'minOrderQuantity', 'أقل كمية يجب أن تكون 1 على الأقل');
   }
 
   if (draft.maxOrderQuantity != null && draft.maxOrderQuantity < draft.minOrderQuantity) {
     addError(errors, 'maxOrderQuantity', 'أقصى كمية يجب أن تكون أكبر من أو تساوي أقل كمية');
-  }
-
-  if (draft.inventoryTrackingEnabled && !draft.madeToOrder) {
-    if (draft.quantity == null) {
-      addError(errors, 'quantity', 'الكمية مطلوبة عند تفعيل تتبع المخزون');
-    }
-
-    if ((draft.quantity ?? 0) < 0) {
-      addError(errors, 'quantity', 'الكمية لا يمكن أن تكون سالبة');
-    }
-
-    if (draft.lowStockThreshold < 0) {
-      addError(errors, 'lowStockThreshold', 'حد التنبيه يجب أن يكون رقمًا موجبًا');
-    }
   }
 }
 

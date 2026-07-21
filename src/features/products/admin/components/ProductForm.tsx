@@ -474,22 +474,12 @@ function InventorySection({ draft, update }: SectionProps & { update: <K extends
     <section className="form-section">
       <div className="section-kicker">06</div>
       <div>
-        <h2>المخزون ومدة التجهيز</h2>
+        <h2>مدة التجهيز والطلب</h2>
         <div className="form-grid">
           <label className="toggle-field">
             <input checked={draft.madeToOrder} type="checkbox" onChange={(event) => update('madeToOrder', event.target.checked)} />
             مصنوع حسب الطلب
           </label>
-          <label className="toggle-field">
-            <input checked={draft.inventoryTrackingEnabled} type="checkbox" onChange={(event) => update('inventoryTrackingEnabled', event.target.checked)} />
-            تتبع المخزون
-          </label>
-          <Field label="الكمية">
-            <input min="0" type="number" value={draft.quantity ?? ''} disabled={draft.madeToOrder} onChange={(event) => update('quantity', event.target.value === '' ? null : Number(event.target.value))} />
-          </Field>
-          <Field label="تنبيه انخفاض المخزون">
-            <input min="0" type="number" value={draft.lowStockThreshold} onChange={(event) => update('lowStockThreshold', Number(event.target.value))} />
-          </Field>
           <Field label="أقل كمية للطلب">
             <input min="1" type="number" value={draft.minOrderQuantity} onChange={(event) => update('minOrderQuantity', Number(event.target.value))} />
           </Field>

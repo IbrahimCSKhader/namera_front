@@ -81,7 +81,7 @@ export function CartPage() {
           <div>
             <p className="eyebrow">السلة</p>
             <h2>مراجعة الطلب</h2>
-            <p>لن يتم خصم المخزون عند إرسال الطلب؛ الخصم يتم بعد موافقة صاحب المتجر أو استلام الطلب.</p>
+            <p>راجعي المنتجات والتخصيصات قبل إرسال الطلب لصاحب المتجر.</p>
           </div>
           <Link className="button button-secondary" to={ROUTES.products}>متابعة التسوق</Link>
         </section>

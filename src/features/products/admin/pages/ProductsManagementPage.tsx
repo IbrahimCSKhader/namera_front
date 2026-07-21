@@ -14,17 +14,16 @@ export function ProductsManagementPage() {
   const [search, setSearch] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [status, setStatus] = useState('');
-  const [lowStockOnly, setLowStockOnly] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     void load();
-  }, [search, categoryId, status, lowStockOnly]);
+  }, [search, categoryId, status]);
 
   async function load() {
     setIsLoading(true);
     const [productsResponse, categoriesResponse] = await Promise.all([
-      getAdminProducts({ search, categoryId, status, lowStockOnly }),
+      getAdminProducts({ search, categoryId, status }),
       getCategories(),
     ]);
     setProducts(productsResponse);
@@ -87,10 +86,6 @@ export function ProductsManagementPage() {
           <option value="unavailable">غير متوفر</option>
           <option value="archived">مؤرشف</option>
         </select>
-        <label className="toggle-field">
-          <input checked={lowStockOnly} type="checkbox" onChange={(event) => setLowStockOnly(event.target.checked)} />
-          منخفضة المخزون
-        </label>
       </section>
 
       {isLoading ? (
@@ -105,7 +100,6 @@ export function ProductsManagementPage() {
                 <th>التصنيف</th>
                 <th>السعر</th>
                 <th>الحالة</th>
-                <th>المخزون</th>
                 <th>مخصص؟</th>
                 <th>آخر تعديل</th>
                 <th>إجراءات</th>
@@ -119,7 +113,6 @@ export function ProductsManagementPage() {
                   <td>{product.categoryName}</td>
                   <td>{product.priceLabel}</td>
                   <td><StatusBadge status={product.status} /></td>
-                  <td>{product.inventoryLabel}</td>
                   <td>{product.customizationLabel}</td>
                   <td>{new Date(product.updatedAt).toLocaleDateString('ar-EG')}</td>
                   <td>

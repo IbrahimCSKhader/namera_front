@@ -313,7 +313,6 @@ const ownerNavItems: NavItem[] = [
       { label: 'جميع المنتجات', to: ROUTES.ownerProducts },
       { label: 'إضافة منتج جديد', to: ROUTES.ownerAddProduct },
       { label: 'المنتجات غير المتوفرة', to: `${ROUTES.ownerProducts}?status=unavailable` },
-      { label: 'المنتجات منخفضة المخزون', to: `${ROUTES.ownerProducts}?lowStockOnly=true` },
       { label: 'المنتجات المخفية', to: `${ROUTES.ownerProducts}?status=hidden` },
     ],
   },

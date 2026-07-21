@@ -68,7 +68,9 @@ describe('admin product service', () => {
         status: 'draft',
         pricingType: 'fixed',
         basePrice: 120,
-        quantity: 7,
+        inventoryTrackingEnabled: false,
+        quantity: null,
+        lowStockThreshold: 0,
         images: [
           {
             imageUrl: '/uploads/products/product-1/images/primary.png',

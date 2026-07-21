@@ -64,7 +64,7 @@ export function OwnerOrdersPage() {
   const totals = useMemo(() => ({
     all: orders.length,
     pending: orders.filter((order) => order.status === 'pending').length,
-    stockDeducted: orders.filter((order) => order.stockDeducted).length,
+    active: orders.filter((order) => !['completed', 'cancelled', 'rejected'].includes(order.status)).length,
   }), [orders]);
 
   return (
@@ -72,13 +72,13 @@ export function OwnerOrdersPage() {
       <section className="owner-page-heading">
         <p className="eyebrow">إدارة الطلبات</p>
         <h2>طلبات الزبائن</h2>
-        <p>إرسال الطلب لا يخصم المخزون. الخصم يتم عند تحويل الحالة إلى مقبول أو تم استلامه وما بعدها.</p>
+        <p>تابعي طلبات الزبائن من لحظة الإرسال حتى التجهيز والتسليم.</p>
       </section>
 
       <section className="owner-stats">
         <Stat label="كل الطلبات" value={totals.all} />
         <Stat label="طلبات جديدة" value={totals.pending} />
-        <Stat label="تم خصم مخزونها" value={totals.stockDeducted} />
+        <Stat label="طلبات نشطة" value={totals.active} />
       </section>
 
       <section className="product-filters owner-order-filters">
@@ -112,7 +112,6 @@ export function OwnerOrdersPage() {
                 <th>الزبون</th>
                 <th>الإجمالي</th>
                 <th>الحالة</th>
-                <th>المخزون</th>
                 <th>المنتجات</th>
                 <th>تغيير الحالة</th>
               </tr>
@@ -130,7 +129,6 @@ export function OwnerOrdersPage() {
                   </td>
                   <td>{order.total.toLocaleString('ar')} شيكل</td>
                   <td><span className={`status-badge ${order.status}`}>{order.statusLabel}</span></td>
-                  <td>{order.stockDeducted ? 'مخصوم' : 'لم يخصم'}</td>
                   <td>
                     <div className="order-items-summary">
                       {order.items.map((item) => (
