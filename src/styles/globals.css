@@ -2702,6 +2702,160 @@ img {
   font-weight: 800;
 }
 
+.contact-page {
+  width: min(100%, var(--container-max));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 42px 24px 96px;
+}
+
+.contact-hero {
+  max-width: 680px;
+  margin-bottom: 28px;
+}
+
+.contact-hero h1,
+.contact-card-copy h2 {
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.contact-hero h1 {
+  font-size: clamp(42px, 6vw, 76px);
+}
+
+.contact-hero p {
+  margin: 18px 0 0;
+  color: var(--color-text-muted);
+  font-size: 19px;
+  line-height: 1.9;
+}
+
+.contact-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.78fr) minmax(320px, 1fr);
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 251, 0.84)),
+    var(--color-surface-strong);
+  border: 1px solid rgba(225, 190, 196, 0.72);
+  border-radius: 30px;
+  box-shadow: var(--shadow-warm);
+}
+
+.contact-card-copy span {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 0 12px;
+  color: var(--color-primary-dark);
+  background: rgba(255, 219, 206, 0.58);
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.contact-card-copy h2 {
+  font-size: clamp(28px, 4vw, 44px);
+}
+
+.contact-card-copy p {
+  margin: 14px 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.9;
+}
+
+.contact-link-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.contact-link-card {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  min-height: 118px;
+  padding: 16px;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(225, 190, 196, 0.62);
+  border-radius: 22px;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.contact-link-card:hover,
+.contact-link-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.contact-link-card:focus-visible {
+  outline: 3px solid rgba(151, 72, 96, 0.25);
+  outline-offset: 3px;
+}
+
+.contact-link-logo {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  border-radius: 22px;
+  box-shadow: 0 16px 30px rgba(79, 42, 53, 0.12);
+}
+
+.contact-link-logo svg {
+  width: 38px;
+  height: 38px;
+  fill: white;
+}
+
+.contact-link-card.whatsapp {
+  border-color: rgba(37, 211, 102, 0.32);
+}
+
+.contact-link-card.whatsapp .contact-link-logo {
+  background: #25d366;
+}
+
+.contact-link-card.instagram {
+  border-color: rgba(225, 48, 108, 0.28);
+}
+
+.contact-link-card.instagram .contact-link-logo {
+  background: linear-gradient(135deg, #feda75 0%, #fa7e1e 28%, #d62976 58%, #962fbf 78%, #4f5bd5 100%);
+}
+
+.contact-link-card small,
+.contact-link-card strong,
+.contact-link-card em {
+  display: block;
+}
+
+.contact-link-card small {
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+.contact-link-card strong {
+  margin-top: 4px;
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.contact-link-card em {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  font-style: normal;
+  line-height: 1.7;
+}
+
 @media (max-width: 920px) {
   .global-header-inner {
     min-height: 68px;
@@ -2863,7 +3017,8 @@ img {
   .about-hero,
   .about-story,
   .about-values,
-  .about-milestones {
+  .about-milestones,
+  .contact-card {
     grid-template-columns: 1fr;
   }
 
@@ -2904,6 +3059,10 @@ img {
   .about-milestones article + article {
     border-block-start: 1px solid rgba(216, 194, 187, 0.56);
     border-inline-start: 0;
+  }
+
+  .contact-card {
+    align-items: stretch;
   }
 }
 
@@ -3045,6 +3204,38 @@ img {
 
   .product-viewer-item strong {
     font-size: 12px;
+  }
+
+  .contact-page {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .contact-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .contact-link-card {
+    grid-template-columns: 58px minmax(0, 1fr);
+    min-height: 104px;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .contact-link-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+  }
+
+  .contact-link-logo svg {
+    width: 31px;
+    height: 31px;
+  }
+
+  .contact-link-card strong {
+    font-size: 18px;
   }
 
   .cart-item {

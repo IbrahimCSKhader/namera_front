@@ -6,7 +6,7 @@ import { ROUTES } from '../../shared/constants/routes';
 
 const HomePage = lazy(() => import('../../features/public/pages/HomePage').then(({ HomePage }) => ({ default: HomePage })));
 const AboutPage = lazy(() => import('../../features/public/pages/AboutPage').then(({ AboutPage }) => ({ default: AboutPage })));
-const StaticPage = lazy(() => import('../../features/public/pages/StaticPage').then(({ StaticPage }) => ({ default: StaticPage })));
+const ContactPage = lazy(() => import('../../features/public/pages/ContactPage').then(({ ContactPage }) => ({ default: ContactPage })));
 const ProductsPage = lazy(() => import('../../features/products/pages/ProductsPage').then(({ ProductsPage }) => ({ default: ProductsPage })));
 const ProductDetailsPage = lazy(() => import('../../features/products/pages/ProductDetailsPage').then(({ ProductDetailsPage }) => ({ default: ProductDetailsPage })));
 const CartPage = lazy(() => import('../../features/orders/pages/CartPage').then(({ CartPage }) => ({ default: CartPage })));
@@ -39,7 +39,7 @@ export function AppRouter() {
         <Route path={ROUTES.productDetails} element={<ProductDetailsPage />} />
         <Route path={ROUTES.categories} element={<ProductsPage />} />
         <Route path={ROUTES.about} element={<AboutPage />} />
-        <Route path={ROUTES.contact} element={<StaticPage title="تواصل معنا" subtitle="يمكن ربط هذه الصفحة لاحقا بنموذج رسائل أو بيانات التواصل الخاصة بالمتجر." />} />
+        <Route path={ROUTES.contact} element={<ContactPage />} />
         <Route path={ROUTES.cart} element={<CartPage />} />
         <Route path={ROUTES.login} element={<LoginPage />} />
         <Route path={ROUTES.register} element={<RegisterPage />} />
