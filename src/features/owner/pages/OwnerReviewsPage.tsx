@@ -5,6 +5,7 @@ import {
   getOwnerReviews,
   setOwnerReviewVisibility,
 } from '../services/ownerApi';
+import { formatRoseRating, getRoseRatingLabel } from '../../../shared/utils/roseRating';
 import { type OwnerReview } from '../types/ownerTypes';
 
 export function OwnerReviewsPage() {
@@ -115,7 +116,7 @@ export function OwnerReviewsPage() {
                     {review.customerName}
                     <small className="table-subtext">{review.customerPhoneNumber}</small>
                   </td>
-                  <td>{review.rating} / 6</td>
+                  <td><span className="rose-rating-display" aria-label={getRoseRatingLabel(review.rating)}>{formatRoseRating(review.rating)}</span></td>
                   <td>{review.comment}</td>
                   <td><span className={review.isVisible ? 'status-badge published' : 'status-badge hidden'}>{review.isVisible ? 'ظاهر' : 'مخفي'}</span></td>
                   <td>

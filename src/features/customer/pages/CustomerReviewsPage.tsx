@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CustomerLayout } from '../../../shared/components/layout/CustomerLayout';
 import { ROUTES } from '../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
+import { formatRoseRating, getRoseRatingLabel } from '../../../shared/utils/roseRating';
 import { getProducts } from '../../products/services/productApi';
 import { type Product } from '../../products/types/productTypes';
 import { deleteReview, getReviews, saveReview } from '../services/customerApi';
@@ -114,7 +115,7 @@ export function CustomerReviewsPage() {
               التقييم
               <select value={rating} onChange={(event) => setRating(Number(event.target.value))}>
                 {[6, 5, 4, 3, 2, 1, 0].map((value) => (
-                  <option key={value} value={value}>{value} / 6</option>
+                  <option key={value} value={value}>{formatRoseRating(value)} - {getRoseRatingLabel(value)}</option>
                 ))}
               </select>
             </label>
@@ -138,7 +139,7 @@ export function CustomerReviewsPage() {
                       {review.productImageUrl ? <img src={resolveMediaUrl(review.productImageUrl)} alt={review.productName} loading="lazy" decoding="async" /> : null}
                       <div>
                         <h3>{review.productName}</h3>
-                        <p>{'★'.repeat(review.rating)}{'☆'.repeat(6 - review.rating)}</p>
+                        <p className="rose-rating-display" aria-label={getRoseRatingLabel(review.rating)}>{formatRoseRating(review.rating)}</p>
                       </div>
                     </header>
                     <p>{review.comment}</p>

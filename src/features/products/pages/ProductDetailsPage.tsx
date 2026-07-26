@@ -6,6 +6,7 @@ import { uploadOrderCustomizationImage } from '../../orders/services/orderApi';
 import { addProductToCart, type CartCustomizationField, type CartCustomizationOption, type CartCustomRequestItem } from '../../orders/utils/cartStorage';
 import { ROUTES } from '../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
+import { formatRoseRating, getRoseRatingLabel } from '../../../shared/utils/roseRating';
 import * as productApi from '../services/productApi';
 import { type Product } from '../types/productTypes';
 
@@ -354,8 +355,8 @@ export function ProductDetailsPage() {
             <span>التقييم</span>
             <div className="rose-rating-options" role="radiogroup" aria-label="التقييم بالورود">
               {[0, 1, 2, 3, 4, 5, 6].map((value) => (
-                <button className={rating === value ? 'active' : ''} key={value} type="button" aria-pressed={rating === value} onClick={() => setRating(value)}>
-                  <span>{value === 0 ? '0' : 'وردة'.repeat(value)}</span>
+                <button className={rating === value ? 'active' : ''} key={value} type="button" aria-label={getRoseRatingLabel(value)} aria-pressed={rating === value} onClick={() => setRating(value)}>
+                  <span aria-hidden="true">{formatRoseRating(value)}</span>
                   <small>{value}</small>
                 </button>
               ))}

@@ -2332,13 +2332,22 @@ img {
 }
 
 .rose-rating-options button span {
-  font-size: 11px;
+  font-size: 18px;
   font-weight: 900;
   line-height: 1.2;
 }
 
 .rose-rating-options button small {
   font-weight: 900;
+}
+
+.rose-rating-display {
+  display: inline-flex;
+  min-width: 44px;
+  color: var(--color-primary-dark);
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: 0;
 }
 
 .cart-layout {
