@@ -29,6 +29,7 @@ const product: Product = {
   isCustomizable: true,
   hasVariants: false,
   madeToOrder: true,
+  allowRatings: true,
   allowOrdering: true,
   minimumQuantity: 1,
   maximumQuantity: null,

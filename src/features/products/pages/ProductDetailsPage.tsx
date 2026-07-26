@@ -328,6 +328,7 @@ export function ProductDetailsPage() {
         </div>
       </section>
 
+      {product.allowRatings ? (
       <section className="product-review-section">
         <div>
           <p className="eyebrow">التقييم</p>
@@ -369,6 +370,7 @@ export function ProductDetailsPage() {
           </button>
         </form>
       </section>
+      ) : null}
     </main>
   );
 }

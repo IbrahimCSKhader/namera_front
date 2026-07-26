@@ -24,7 +24,7 @@ export function CustomerReviewsPage() {
       try {
         const [reviewsResponse, productsResponse] = await Promise.all([getReviews(), getProducts()]);
         setReviews(reviewsResponse.data ?? []);
-        const rateableProducts = (productsResponse.data ?? []).filter((product) => product.allowOrdering);
+        const rateableProducts = (productsResponse.data ?? []).filter((product) => product.allowRatings);
         setProducts(rateableProducts);
         setProductId(rateableProducts[0]?.id ?? '');
       } catch (caughtError) {
@@ -113,8 +113,8 @@ export function CustomerReviewsPage() {
             <label className="field admin-field">
               التقييم
               <select value={rating} onChange={(event) => setRating(Number(event.target.value))}>
-                {[5, 4, 3, 2, 1].map((value) => (
-                  <option key={value} value={value}>{value} / 5</option>
+                {[6, 5, 4, 3, 2, 1, 0].map((value) => (
+                  <option key={value} value={value}>{value} / 6</option>
                 ))}
               </select>
             </label>
@@ -138,7 +138,7 @@ export function CustomerReviewsPage() {
                       {review.productImageUrl ? <img src={resolveMediaUrl(review.productImageUrl)} alt={review.productName} loading="lazy" decoding="async" /> : null}
                       <div>
                         <h3>{review.productName}</h3>
-                        <p>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</p>
+                        <p>{'★'.repeat(review.rating)}{'☆'.repeat(6 - review.rating)}</p>
                       </div>
                     </header>
                     <p>{review.comment}</p>

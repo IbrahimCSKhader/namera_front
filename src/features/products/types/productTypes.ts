@@ -31,6 +31,7 @@ export type Product = {
   isCustomizable: boolean;
   hasVariants: boolean;
   madeToOrder: boolean;
+  allowRatings: boolean;
   allowOrdering: boolean;
   minimumQuantity: number;
   maximumQuantity: number | null;

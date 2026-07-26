@@ -115,7 +115,7 @@ export function OwnerReviewsPage() {
                     {review.customerName}
                     <small className="table-subtext">{review.customerPhoneNumber}</small>
                   </td>
-                  <td>{review.rating} / 5</td>
+                  <td>{review.rating} / 6</td>
                   <td>{review.comment}</td>
                   <td><span className={review.isVisible ? 'status-badge published' : 'status-badge hidden'}>{review.isVisible ? 'ظاهر' : 'مخفي'}</span></td>
                   <td>
