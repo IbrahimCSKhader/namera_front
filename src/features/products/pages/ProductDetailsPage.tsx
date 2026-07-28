@@ -174,14 +174,44 @@ export function ProductDetailsPage() {
     setReviewMessage('');
 
     try {
-      await saveReview({
+      const response = await saveReview({
         productId: product.id,
         rating,
         comment: reviewComment,
         customerName: reviewCustomerName.trim(),
         customerPhoneNumber: reviewCustomerPhoneNumber.trim(),
       });
-      setReviewMessage('تم حفظ تقييمك. سيظهر للزوار بعد مراجعة صاحب المتجر.');
+      if (response.data) {
+        const reviewerName = reviewCustomerName.trim() || `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
+        const nextReview = {
+          id: response.data.id,
+          rating: response.data.rating,
+          comment: response.data.comment,
+          customerName: reviewerName,
+          createdAt: response.data.createdAt,
+        };
+
+        setProduct((current) => {
+          if (!current) {
+            return current;
+          }
+
+          const reviews = [
+            nextReview,
+            ...(current.reviews ?? []).filter((review) => review.id !== nextReview.id),
+          ];
+
+          return {
+            ...current,
+            reviews,
+            reviewsCount: reviews.length,
+            averageRating: reviews.length
+              ? Math.round((reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length) * 10) / 10
+              : 0,
+          };
+        });
+      }
+      setReviewMessage('تم حفظ تقييمك وظهر في تقييمات المنتج.');
       setReviewComment('');
       setRating(6);
     } catch (caughtError) {
@@ -336,6 +366,29 @@ export function ProductDetailsPage() {
           <h2>قيّم المنتج</h2>
           <p>شارك تجربتك مع المنتج من نفس الصفحة.</p>
         </div>
+        <div className="product-review-content">
+        <div className="customer-panel product-review-list">
+          <div className="split-heading">
+            <div>
+              <h3>تقييمات المنتج</h3>
+              <p>{(product.reviewsCount ?? 0) > 0 ? `${product.reviewsCount} تقييم | متوسط ${(product.averageRating ?? 0).toLocaleString('ar')} من 6` : 'لا توجد تقييمات ظاهرة بعد.'}</p>
+            </div>
+            {(product.reviewsCount ?? 0) > 0 ? <span className="rose-rating-display">{formatRoseRating(Math.round(product.averageRating ?? 0))}</span> : null}
+          </div>
+          {(product.reviews ?? []).length > 0 ? (
+            <div className="review-card-list">
+              {product.reviews.map((review) => (
+                <article className="review-card" key={review.id}>
+                  <div>
+                    <strong>{review.customerName || 'عميل'}</strong>
+                    <span className="rose-rating-display" aria-label={getRoseRatingLabel(review.rating)}>{formatRoseRating(review.rating)}</span>
+                  </div>
+                  <p>{review.comment}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </div>
         <form className="customer-panel form-stack" onSubmit={handleReviewSubmit}>
           {reviewError ? <div className="form-error">{reviewError}</div> : null}
           {reviewMessage ? <div className="form-success">{reviewMessage}</div> : null}
@@ -370,6 +423,7 @@ export function ProductDetailsPage() {
             {isReviewSubmitting ? 'جار الحفظ...' : 'حفظ التقييم'}
           </button>
         </form>
+        </div>
       </section>
       ) : null}
     </main>

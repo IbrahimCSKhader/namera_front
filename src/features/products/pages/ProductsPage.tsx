@@ -117,7 +117,7 @@ export function ProductsPage() {
           <CategoriesGrid categories={visibleCategories} />
           <Pagination page={page} pageSize={pageSize} totalItems={categories.length} onPageChange={setPage} />
         </>
-      ) : filteredProducts.length > 0 ? (
+      ) : (
         <>
           <ProductFilters
             categories={categories}
@@ -128,15 +128,19 @@ export function ProductsPage() {
             onChange={updateFilter}
             onClear={clearFilters}
           />
+          {filteredProducts.length > 0 ? (
+            <>
           <div className="shop-product-grid">
             {visibleProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
           <Pagination page={page} pageSize={pageSize} totalItems={filteredProducts.length} onPageChange={setPage} />
+            </>
+          ) : (
+            <p className="empty-state">{activeCategory ? 'لا توجد منتجات مطابقة داخل هذا التصنيف حاليا.' : 'لا توجد منتجات مطابقة لهذه الفلاتر حاليا.'}</p>
+          )}
         </>
-      ) : (
-        <p className="empty-state">{activeCategory ? 'لا توجد منتجات منشورة داخل هذا التصنيف حاليا.' : 'لا توجد منتجات منشورة حاليا.'}</p>
       )}
     </main>
   );

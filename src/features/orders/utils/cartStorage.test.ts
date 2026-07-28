@@ -51,6 +51,9 @@ const product: Product = {
       displayOrder: 1,
     },
   ],
+  reviews: [],
+  reviewsCount: 0,
+  averageRating: 0,
   optionGroups: [],
   customizationFields: [],
 };

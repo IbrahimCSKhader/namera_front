@@ -177,10 +177,7 @@ function extractError(error: unknown): string {
 
 function openOrderInWhatsApp(order: Order) {
   const itemsText = order.items
-    .map((item, index) => {
-      const customization = item.customizationSummary ? `\n   التخصيص: ${item.customizationSummary}` : '';
-      return `${index + 1}. ${item.productName} × ${item.quantity} - ${item.lineTotal.toLocaleString('ar')} شيكل${customization}`;
-    })
+    .map((item, index) => buildWhatsAppOrderItemText(item, index))
     .join('\n');
   const message = [
     'طلب جديد من متجر Namira',
@@ -198,4 +195,55 @@ function openOrderInWhatsApp(order: Order) {
   const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(message)}`;
 
   window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+}
+
+function buildWhatsAppOrderItemText(item: Order['items'][number], index: number) {
+  const customization = item.customizationSummary
+    ? `\n   التخصيص: ${replaceMediaPathsWithAbsoluteUrls(item.customizationSummary)}`
+    : '';
+  const imageLinks = collectOrderItemImageLinks(item);
+  const images = imageLinks.length > 0
+    ? `\n   الصور:\n${imageLinks.map((url) => `   - ${url}`).join('\n')}`
+    : '';
+
+  return `${index + 1}. ${item.productName} × ${item.quantity} - ${item.lineTotal.toLocaleString('ar')} شيكل${customization}${images}`;
+}
+
+function collectOrderItemImageLinks(item: Order['items'][number]) {
+  const urls = new Set<string>();
+
+  if (item.imageUrl) {
+    urls.add(resolveMediaUrl(item.imageUrl));
+  }
+
+  parseCustomizationDetails(item.customizationDetailsJson)
+    .flatMap((detail) => extractMediaUrls(detail.value))
+    .forEach((url) => urls.add(resolveMediaUrl(url)));
+
+  return [...urls];
+}
+
+function parseCustomizationDetails(detailsJson: string): Array<{ value: string }> {
+  if (!detailsJson) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(detailsJson) as Array<{ value?: unknown }>;
+    return Array.isArray(parsed)
+      ? parsed.map((detail) => ({ value: typeof detail.value === 'string' ? detail.value : '' }))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function replaceMediaPathsWithAbsoluteUrls(value: string) {
+  return value.replace(/(^|[\s|:])((?:https?:\/\/|\/uploads\/)[^\s|]+)/gi, (match, prefix: string, url: string) => {
+    return `${prefix}${resolveMediaUrl(url)}`;
+  });
+}
+
+function extractMediaUrls(value: string) {
+  return [...value.matchAll(/(?:https?:\/\/|\/uploads\/)[^\s|]+/gi)].map((match) => match[0]);
 }

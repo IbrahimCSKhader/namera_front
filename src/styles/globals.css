@@ -2256,6 +2256,38 @@ img {
   line-height: 1.8;
 }
 
+.product-review-content,
+.review-card-list,
+.product-review-list {
+  display: grid;
+  gap: 14px;
+}
+
+.product-review-list .split-heading {
+  margin-bottom: 0;
+}
+
+.product-review-list .split-heading h3,
+.review-card p {
+  margin: 0;
+}
+
+.review-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  background: var(--color-surface-strong);
+  border: 1px solid rgba(216, 194, 187, 0.42);
+  border-radius: var(--radius-md);
+}
+
+.review-card > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .product-custom-request-list {
   display: grid;
   gap: 12px;

@@ -39,6 +39,15 @@ export type Product = {
   preparationNote: string;
   category: ProductCategory;
   images: ProductImage[];
+  reviews: Array<{
+    id: string;
+    rating: number;
+    comment: string;
+    customerName: string;
+    createdAt: string;
+  }>;
+  reviewsCount: number;
+  averageRating: number;
   optionGroups: Array<{
     id: string;
     name: string;
