@@ -6,7 +6,7 @@ const validRegisterState: RegisterFormState = {
   fullName: 'Layan Ahmad',
   phoneNumber: '0599999999',
   address: 'Ramallah',
-  email: '',
+  email: 'ibrahimabuhania5@gmail.com',
   password: 'Password1',
   confirmPassword: 'Password1',
   acceptTerms: true,
@@ -38,12 +38,16 @@ describe('auth form validation', () => {
     expect(validateRegisterForm(invalidState)).toHaveLength(7);
   });
 
+  it('accepts valid register data with email confirmation address', () => {
+    expect(validateRegisterForm(validRegisterState)).toEqual([]);
+  });
+
   it('builds a backend register request from the simplified UI fields', () => {
     expect(buildRegisterRequest(validRegisterState)).toEqual({
       firstName: 'Layan',
       lastName: 'Ahmad',
       userName: 'customer_0599999999',
-      email: '',
+      email: 'ibrahimabuhania5@gmail.com',
       phoneNumber: '0599999999',
       address: 'Ramallah',
       password: 'Password1',
