@@ -22,6 +22,12 @@ export type ChangeOwnerPasswordRequest = {
   confirmPassword: string;
 };
 
+export type ConfirmOwnerPasswordChangeRequest = {
+  userId: string;
+  code?: string;
+  token?: string;
+};
+
 export type StoreSettings = {
   id: string;
   storeName: string;

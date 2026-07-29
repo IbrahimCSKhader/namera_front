@@ -2,6 +2,7 @@ import { apiClient } from '../../../shared/services/api/apiClient';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import {
   type AuthResponse,
+  type ConfirmEmailCodeRequest,
   type ConfirmEmailRequest,
   type CurrentUser,
   type LoginRequest,
@@ -28,6 +29,14 @@ export function register(request: RegisterRequest): Promise<ApiResponse<Registra
 
 export function confirmEmail(request: ConfirmEmailRequest): Promise<ApiResponse<boolean>> {
   return apiClient<ApiResponse<boolean>>('/auth/confirm-email', {
+    method: 'POST',
+    body: request,
+    requiresAuth: false,
+  });
+}
+
+export function confirmEmailWithCode(request: ConfirmEmailCodeRequest): Promise<ApiResponse<boolean>> {
+  return apiClient<ApiResponse<boolean>>('/auth/confirm-email-code', {
     method: 'POST',
     body: request,
     requiresAuth: false,

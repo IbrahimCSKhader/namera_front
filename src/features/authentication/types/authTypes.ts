@@ -44,6 +44,11 @@ export type ConfirmEmailRequest = {
   token: string;
 };
 
+export type ConfirmEmailCodeRequest = {
+  userId: string;
+  code: string;
+};
+
 export type ResendEmailConfirmationRequest = {
   email: string;
 };

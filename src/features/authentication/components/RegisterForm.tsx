@@ -4,6 +4,7 @@ import { FormError } from '../../../shared/components/ui/FormError';
 import { Input } from '../../../shared/components/ui/Input';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import { useAuth } from '../hooks/useAuth';
+import { confirmEmailWithCode } from '../services/authApi';
 import { type RegisterRequest } from '../types/authTypes';
 
 export type RegisterFormState = {
@@ -30,6 +31,9 @@ export function RegisterForm() {
   const [formState, setFormState] = useState<RegisterFormState>(initialFormState);
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState('');
+  const [pendingConfirmation, setPendingConfirmation] = useState<{ userId: string; email: string } | null>(null);
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register } = useAuth();
 
@@ -49,7 +53,9 @@ export function RegisterForm() {
     try {
       const response = await register(buildRegisterRequest(formState));
       setFormState(initialFormState);
-      setSuccessMessage(`تم إنشاء الحساب. أرسلنا رابط التفعيل إلى ${response.email}. افتح البريد واضغط رابط التأكيد قبل تسجيل الدخول.`);
+      setPendingConfirmation({ userId: response.userId, email: response.email });
+      setConfirmationCode('');
+      setSuccessMessage(`تم إنشاء الحساب. أرسلنا زر تأكيد وكود تحقق إلى ${response.email}. اختر الطريقة المناسبة لإكمال التفعيل.`);
     } catch (error) {
       setErrors(resolveErrors(error));
     } finally {
@@ -57,7 +63,38 @@ export function RegisterForm() {
     }
   }
 
+  async function handleConfirmCode(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!pendingConfirmation) {
+      return;
+    }
+
+    if (!/^\d{6}$/.test(confirmationCode.trim())) {
+      setErrors(['أدخل كود التحقق المكون من 6 أرقام']);
+      return;
+    }
+
+    setIsConfirming(true);
+    setErrors([]);
+
+    try {
+      const response = await confirmEmailWithCode({
+        userId: pendingConfirmation.userId,
+        code: confirmationCode.trim(),
+      });
+      setPendingConfirmation(null);
+      setConfirmationCode('');
+      setSuccessMessage(response.message || 'تم تأكيد البريد الإلكتروني بنجاح. يمكنك تسجيل الدخول الآن.');
+    } catch (error) {
+      setErrors(resolveErrors(error));
+    } finally {
+      setIsConfirming(false);
+    }
+  }
+
   return (
+    <div className="form-stack">
     <form className="form-stack" onSubmit={handleSubmit}>
       <FormError errors={errors} />
       {successMessage ? <div className="form-success">{successMessage}</div> : null}
@@ -128,6 +165,22 @@ export function RegisterForm() {
         إنشاء حساب زبون
       </Button>
     </form>
+    {pendingConfirmation ? (
+      <form className="form-stack auth-switch-box" onSubmit={handleConfirmCode}>
+        <Input
+          label="كود التحقق"
+          name="confirmationCode"
+          value={confirmationCode}
+          placeholder="123456"
+          dir="ltr"
+          onChange={setConfirmationCode}
+        />
+        <Button type="submit" isLoading={isConfirming}>
+          تأكيد الحساب بالكود
+        </Button>
+      </form>
+    ) : null}
+    </div>
   );
 }
 

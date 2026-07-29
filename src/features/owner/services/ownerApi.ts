@@ -2,6 +2,7 @@ import { apiClient } from '../../../shared/services/api/apiClient';
 import { type ApiResponse } from '../../../shared/types/apiResponse';
 import {
   type ChangeOwnerPasswordRequest,
+  type ConfirmOwnerPasswordChangeRequest,
   type OwnerProfile,
   type OwnerReview,
   type StoreSettings,
@@ -24,6 +25,14 @@ export function changeOwnerPassword(request: ChangeOwnerPasswordRequest): Promis
   return apiClient<ApiResponse<boolean>>('/admin/account/password', {
     method: 'PUT',
     body: request,
+  });
+}
+
+export function confirmOwnerPasswordChange(request: ConfirmOwnerPasswordChangeRequest): Promise<ApiResponse<boolean>> {
+  return apiClient<ApiResponse<boolean>>('/admin/account/password/confirm', {
+    method: 'POST',
+    body: request,
+    requiresAuth: false,
   });
 }
 

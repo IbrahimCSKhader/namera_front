@@ -1,12 +1,17 @@
 import { FormEvent, useState } from 'react';
 import { OwnerLayout } from '../../../shared/components/layout/OwnerLayout';
-import { changeOwnerPassword } from '../services/ownerApi';
+import { useAuth } from '../../authentication/hooks/useAuth';
+import { changeOwnerPassword, confirmOwnerPasswordChange } from '../services/ownerApi';
 
 export function OwnerPasswordPage() {
+  const { user } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [hasPendingVerification, setHasPendingVerification] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -17,15 +22,48 @@ export function OwnerPasswordPage() {
     setMessage('');
 
     try {
-      await changeOwnerPassword({ currentPassword, newPassword, confirmPassword });
+      const response = await changeOwnerPassword({ currentPassword, newPassword, confirmPassword });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setMessage('تم تغيير كلمة المرور.');
+      setVerificationCode('');
+      setHasPendingVerification(true);
+      setMessage(response.message || 'أرسلنا كود ورابط تحقق إلى بريد صاحب المتجر.');
     } catch (caughtError) {
       setError(extractError(caughtError));
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleConfirmCode(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!user) {
+      setError('انتهت جلسة الدخول. سجل الدخول ثم حاول مرة أخرى.');
+      return;
+    }
+
+    if (!/^\d{6}$/.test(verificationCode.trim())) {
+      setError('أدخل كود التحقق المكون من 6 أرقام');
+      return;
+    }
+
+    setIsConfirming(true);
+    setError('');
+
+    try {
+      const response = await confirmOwnerPasswordChange({
+        userId: user.id,
+        code: verificationCode.trim(),
+      });
+      setVerificationCode('');
+      setHasPendingVerification(false);
+      setMessage(response.message || 'تم تغيير كلمة المرور بنجاح.');
+    } catch (caughtError) {
+      setError(extractError(caughtError));
+    } finally {
+      setIsConfirming(false);
     }
   }
 
@@ -54,6 +92,24 @@ export function OwnerPasswordPage() {
         </label>
         <button className="button button-primary" type="submit" disabled={isSubmitting}>{isSubmitting ? 'جار التغيير...' : 'تغيير كلمة المرور'}</button>
       </form>
+
+      {hasPendingVerification ? (
+        <form className="customer-panel form-stack owner-account-form" onSubmit={handleConfirmCode}>
+          <label className="field admin-field">
+            كود التحقق
+            <input
+              dir="ltr"
+              inputMode="numeric"
+              maxLength={6}
+              value={verificationCode}
+              onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+            />
+          </label>
+          <button className="button button-primary" type="submit" disabled={isConfirming}>
+            {isConfirming ? 'جار التأكيد...' : 'تأكيد تغيير كلمة المرور بالكود'}
+          </button>
+        </form>
+      ) : null}
     </OwnerLayout>
   );
 }
