@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CustomerLayout } from '../../../shared/components/layout/CustomerLayout';
 import { Pagination, paginateItems } from '../../../shared/components/ui/Pagination';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
+import { OrderCustomizationMedia } from '../components/OrderCustomizationMedia';
 import { getMyOrders } from '../services/orderApi';
 import { type Order } from '../types/orderTypes';
 
@@ -59,7 +60,7 @@ export function CustomerOrdersPage() {
                     {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.productName} loading="lazy" decoding="async" /> : null}
                     <span>
                       {item.productName} × {item.quantity}
-                      {item.customizationSummary ? <small>{item.customizationSummary}</small> : null}
+                      <OrderCustomizationMedia item={item} />
                     </span>
                   </div>
                 ))}

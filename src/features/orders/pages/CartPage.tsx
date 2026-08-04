@@ -6,6 +6,7 @@ import { clearCart, readCart, updateCartQuantity } from '../utils/cartStorage';
 import { ROUTES } from '../../../shared/constants/routes';
 import { resolveMediaUrl } from '../../../shared/utils/mediaUrl';
 import { type Order } from '../types/orderTypes';
+import { getOrderCustomizationImageUrls, getOrderItemCustomizationImageUrls, getOrderItemCustomizationTextLines } from '../utils/orderMedia';
 
 const ownerWhatsAppNumber = '972595769185';
 
@@ -82,7 +83,7 @@ export function CartPage() {
       setItems([]);
       setMessage(`تم إرسال الطلب ${response.data?.orderNumber ?? ''} بنجاح.`);
       if (response.data) {
-        openOrderInWhatsApp(response.data);
+        await openOrderInWhatsApp(response.data);
       }
       if (isAuthenticated) {
         navigate(ROUTES.customerOrders);
@@ -121,6 +122,7 @@ export function CartPage() {
                     <h3>{item.name}</h3>
                     <p>{item.priceLabel || `${item.unitPrice.toLocaleString('ar')} شيكل`}</p>
                     {item.customizationSummary ? <small className="cart-customization-summary">{item.customizationSummary}</small> : null}
+                    <CartCustomizationImages imageUrls={collectCartCustomizationImageUrls(item)} productName={item.name} />
                   </div>
                   <input min="0" type="number" value={item.quantity} onChange={(event) => changeQuantity(item.cartItemId, Number(event.target.value))} />
                 </article>
@@ -163,6 +165,37 @@ export function CartPage() {
   );
 }
 
+function CartCustomizationImages({ imageUrls, productName }: { imageUrls: string[]; productName: string }) {
+  if (imageUrls.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="order-media-grid cart-customization-images">
+      {imageUrls.map((imageUrl, index) => {
+        const resolvedImageUrl = resolveMediaUrl(imageUrl);
+
+        return (
+          <a href={resolvedImageUrl} key={resolvedImageUrl} target="_blank" rel="noreferrer" aria-label={`فتح صورة تخصيص ${productName}`}>
+            <img src={resolvedImageUrl} alt={`${productName} تخصيص ${index + 1}`} loading="lazy" decoding="async" />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+function collectCartCustomizationImageUrls(item: ReturnType<typeof readCart>[number]) {
+  return [
+    ...item.customFields
+      .filter((field) => field.fieldType === 'imageUpload' && field.value)
+      .map((field) => field.value),
+    ...item.customRequestItems
+      .map((requestItem) => requestItem.imageUrl ?? '')
+      .filter(Boolean),
+  ];
+}
+
 function extractError(error: unknown): string {
   if (typeof error === 'object' && error && 'errors' in error && Array.isArray((error as { errors: unknown }).errors)) {
     return ((error as { errors: string[] }).errors).join(' ');
@@ -175,11 +208,25 @@ function extractError(error: unknown): string {
   return 'تعذر إرسال الطلب. حاول مرة أخرى.';
 }
 
-function openOrderInWhatsApp(order: Order) {
+async function openOrderInWhatsApp(order: Order) {
+  const shareMessage = buildWhatsAppOrderMessage(order, 'attached');
+
+  if (await shareOrderImages(order, shareMessage)) {
+    return;
+  }
+
+  const fallbackMessage = buildWhatsAppOrderMessage(order, 'dashboard');
+  const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(fallbackMessage)}`;
+
+  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+}
+
+function buildWhatsAppOrderMessage(order: Order, imageDelivery: 'attached' | 'dashboard') {
   const itemsText = order.items
-    .map((item, index) => buildWhatsAppOrderItemText(item, index))
+    .map((item, index) => buildWhatsAppOrderItemText(item, index, imageDelivery))
     .join('\n');
-  const message = [
+
+  return [
     'طلب جديد من متجر Namira',
     `رقم الطلب: ${order.orderNumber}`,
     `الزبون: ${order.customerName || 'غير محدد'}`,
@@ -192,58 +239,78 @@ function openOrderInWhatsApp(order: Order) {
     `الإجمالي: ${order.total.toLocaleString('ar')} شيكل`,
     order.notes ? `ملاحظات: ${order.notes}` : '',
   ].filter(Boolean).join('\n');
-  const whatsappUrl = `https://wa.me/${ownerWhatsAppNumber}?text=${encodeURIComponent(message)}`;
-
-  window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
 }
 
-function buildWhatsAppOrderItemText(item: Order['items'][number], index: number) {
-  const customization = item.customizationSummary
-    ? `\n   التخصيص: ${replaceMediaPathsWithAbsoluteUrls(item.customizationSummary)}`
+function buildWhatsAppOrderItemText(item: Order['items'][number], index: number, imageDelivery: 'attached' | 'dashboard') {
+  const textLines = getOrderItemCustomizationTextLines(item);
+  const customization = textLines.length > 0
+    ? `\n   التخصيص: ${textLines.join(' | ')}`
     : '';
-  const imageLinks = collectOrderItemImageLinks(item);
-  const images = imageLinks.length > 0
-    ? `\n   الصور:\n${imageLinks.map((url) => `   - ${url}`).join('\n')}`
+  const imageCount = getOrderItemCustomizationImageUrls(item).length;
+  const images = imageCount > 0
+    ? imageDelivery === 'attached'
+      ? `\n   صور التخصيص: ${imageCount} مرفقة كصور`
+      : `\n   صور التخصيص: ${imageCount} ظاهرة داخل الطلب في لوحة الإدارة`
     : '';
 
   return `${index + 1}. ${item.productName} × ${item.quantity} - ${item.lineTotal.toLocaleString('ar')} شيكل${customization}${images}`;
 }
 
-function collectOrderItemImageLinks(item: Order['items'][number]) {
-  const urls = new Set<string>();
-
-  if (item.imageUrl) {
-    urls.add(resolveMediaUrl(item.imageUrl));
+async function shareOrderImages(order: Order, message: string): Promise<boolean> {
+  if (!navigator.share) {
+    return false;
   }
 
-  parseCustomizationDetails(item.customizationDetailsJson)
-    .flatMap((detail) => extractMediaUrls(detail.value))
-    .forEach((url) => urls.add(resolveMediaUrl(url)));
-
-  return [...urls];
-}
-
-function parseCustomizationDetails(detailsJson: string): Array<{ value: string }> {
-  if (!detailsJson) {
-    return [];
+  const imageUrls = getOrderCustomizationImageUrls(order);
+  if (imageUrls.length === 0) {
+    return false;
   }
 
   try {
-    const parsed = JSON.parse(detailsJson) as Array<{ value?: unknown }>;
-    return Array.isArray(parsed)
-      ? parsed.map((detail) => ({ value: typeof detail.value === 'string' ? detail.value : '' }))
-      : [];
-  } catch {
-    return [];
+    const files = (await Promise.all(imageUrls.map(fetchImageAsFile))).filter((file): file is File => Boolean(file));
+
+    if (files.length === 0) {
+      return false;
+    }
+
+    const shareData: ShareData = {
+      title: `Namira ${order.orderNumber}`,
+      text: message,
+      files,
+    };
+
+    if (navigator.canShare && !navigator.canShare(shareData)) {
+      return false;
+    }
+
+    await navigator.share(shareData);
+    return true;
+  } catch (error) {
+    return typeof error === 'object' && error !== null && 'name' in error && error.name === 'AbortError';
   }
 }
 
-function replaceMediaPathsWithAbsoluteUrls(value: string) {
-  return value.replace(/(^|[\s|:])((?:https?:\/\/|\/uploads\/)[^\s|]+)/gi, (match, prefix: string, url: string) => {
-    return `${prefix}${resolveMediaUrl(url)}`;
-  });
+async function fetchImageAsFile(imageUrl: string, index: number): Promise<File | null> {
+  const response = await fetch(imageUrl);
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const blob = await response.blob();
+  if (!blob.type.startsWith('image/')) {
+    return null;
+  }
+
+  return new File([blob], `namira-order-${index + 1}.${getImageExtension(imageUrl, blob.type)}`, { type: blob.type });
 }
 
-function extractMediaUrls(value: string) {
-  return [...value.matchAll(/(?:https?:\/\/|\/uploads\/)[^\s|]+/gi)].map((match) => match[0]);
+function getImageExtension(imageUrl: string, contentType: string): string {
+  const pathExtension = new URL(imageUrl, window.location.origin).pathname.split('.').pop();
+
+  if (pathExtension && /^[a-z0-9]{2,5}$/i.test(pathExtension)) {
+    return pathExtension;
+  }
+
+  return contentType.split('/')[1] || 'jpg';
 }

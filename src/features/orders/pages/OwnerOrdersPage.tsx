@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { OwnerLayout } from '../../../shared/components/layout/OwnerLayout';
 import { Pagination, paginateItems } from '../../../shared/components/ui/Pagination';
+import { OrderCustomizationMedia } from '../components/OrderCustomizationMedia';
 import { getOwnerOrders, updateOrderStatus } from '../services/orderApi';
 import { type Order, type OrderStatus } from '../types/orderTypes';
 
@@ -139,7 +140,7 @@ export function OwnerOrdersPage() {
                       {order.items.map((item) => (
                         <span key={item.id}>
                           {item.productName} × {item.quantity}
-                          {item.customizationSummary ? <small>{item.customizationSummary}</small> : null}
+                          <OrderCustomizationMedia item={item} />
                         </span>
                       ))}
                     </div>

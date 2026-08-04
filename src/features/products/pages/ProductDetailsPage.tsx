@@ -13,6 +13,7 @@ import { type Product } from '../types/productTypes';
 type FieldValue = {
   value: string;
   selectedChoiceIds: string[];
+  isUploading?: boolean;
 };
 
 type CustomRequestPoint = CartCustomRequestItem & {
@@ -90,8 +91,26 @@ export function ProductDetailsPage() {
       [fieldId]: {
         value: value.value ?? current[fieldId]?.value ?? '',
         selectedChoiceIds: value.selectedChoiceIds ?? current[fieldId]?.selectedChoiceIds ?? [],
+        isUploading: value.isUploading ?? current[fieldId]?.isUploading,
       },
     }));
+  }
+
+  async function uploadCustomFieldImage(fieldId: string, file?: File) {
+    if (!file) {
+      return;
+    }
+
+    updateFieldValue(fieldId, { isUploading: true });
+    try {
+      const uploaded = await uploadOrderCustomizationImage(file);
+      updateFieldValue(fieldId, { value: uploaded.url });
+      setError('');
+    } catch (caughtError) {
+      setError(extractError(caughtError));
+    } finally {
+      updateFieldValue(fieldId, { isUploading: false });
+    }
   }
 
   function updateCustomRequestPoint(id: string, value: Partial<CartCustomRequestItem>) {
@@ -305,7 +324,12 @@ export function ProductDetailsPage() {
                   {field.isRequired ? <b>مطلوب</b> : null}
                 </span>
                 {field.description ? <small>{field.description}</small> : null}
-                <CustomizationFieldControl field={field} value={fieldValues[field.id]} onChange={(value) => updateFieldValue(field.id, value)} />
+                <CustomizationFieldControl
+                  field={field}
+                  value={fieldValues[field.id]}
+                  onChange={(value) => updateFieldValue(field.id, value)}
+                  onImageUpload={(file) => uploadCustomFieldImage(field.id, file)}
+                />
               </label>
             ))}
 
@@ -434,10 +458,12 @@ function CustomizationFieldControl({
   field,
   value,
   onChange,
+  onImageUpload,
 }: {
   field: Product['customizationFields'][number];
   value?: FieldValue;
   onChange: (value: Partial<FieldValue>) => void;
+  onImageUpload: (file?: File) => Promise<void>;
 }) {
   const currentValue = value?.value ?? '';
   const selectedChoiceIds = value?.selectedChoiceIds ?? [];
@@ -489,6 +515,20 @@ function CustomizationFieldControl({
         <input checked={currentValue === 'true'} type="checkbox" onChange={(event) => onChange({ value: event.target.checked ? 'true' : '' })} />
         <span>نعم</span>
       </label>
+    );
+  }
+
+  if (field.type === 'imageUpload') {
+    return (
+      <div className="custom-field-image-upload">
+        <label className="file-picker-inline custom-request-file">
+          رفع صورة
+          <input accept="image/*" type="file" onChange={(event) => void onImageUpload(event.target.files?.[0])} />
+          <span>{value?.isUploading ? 'جاري الرفع...' : currentValue ? 'تم رفع الصورة' : 'اختيار صورة'}</span>
+        </label>
+        {currentValue ? <img className="custom-request-preview" src={resolveMediaUrl(currentValue)} alt={field.label} loading="lazy" decoding="async" /> : null}
+        {currentValue ? <button className="text-button danger" type="button" onClick={() => onChange({ value: '' })}>حذف الصورة</button> : null}
+      </div>
     );
   }
 
@@ -548,7 +588,9 @@ function buildSelection(
       ? choices.map((choice) => choice.label).join('، ')
       : field.type === 'checkbox' && current.value === 'true'
         ? 'نعم'
-        : current.value.trim();
+        : field.type === 'imageUpload' && current.value.trim()
+          ? 'صورة مرفقة'
+          : current.value.trim();
 
     if (!displayValue) {
       return [];
