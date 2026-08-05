@@ -839,38 +839,6 @@ img {
   gap: 18px;
 }
 
-.demo-login-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.demo-login-card {
-  display: grid;
-  min-height: 86px;
-  gap: 6px;
-  padding: 14px;
-  color: var(--color-primary-dark);
-  text-align: right;
-  background: rgba(255, 219, 206, 0.38);
-  border: 1px solid rgba(216, 194, 187, 0.58);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-}
-
-.demo-login-card:hover {
-  background: rgba(255, 219, 206, 0.62);
-}
-
-.demo-login-card span {
-  font-weight: 800;
-}
-
-.demo-login-card small {
-  color: var(--color-text-muted);
-  line-height: 1.6;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3440,10 +3408,6 @@ img {
   }
 
   .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .demo-login-grid {
     grid-template-columns: 1fr;
   }
 

@@ -22,13 +22,6 @@ export const loginMessages = {
 };
 
 const labels = {
-  demoAccounts: '\u062d\u0633\u0627\u0628\u0627\u062a \u062a\u062c\u0631\u064a\u0628\u064a\u0629',
-  ownerLogin: '\u062f\u062e\u0648\u0644 \u0635\u0627\u062d\u0628 \u0627\u0644\u0645\u062d\u0644',
-  ownerDescription:
-    '\u064a\u0641\u062a\u062d \u0644\u0648\u062d\u0629 \u0625\u062f\u0627\u0631\u0629 \u0635\u0627\u062d\u0628 \u0627\u0644\u0645\u062d\u0644',
-  customerLogin: '\u062f\u062e\u0648\u0644 \u0632\u0628\u0648\u0646 \u062a\u062c\u0631\u064a\u0628\u064a',
-  customerDescription:
-    '\u064a\u0641\u062a\u062d \u0644\u0648\u062d\u0629 \u0627\u0644\u0632\u0628\u0648\u0646',
   identifier:
     '\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0623\u0648 \u0627\u0644\u0628\u0631\u064a\u062f \u0623\u0648 \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645',
   password: '\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631',
@@ -39,21 +32,6 @@ const initialFormState: LoginFormState = {
   identifier: '',
   password: '',
 };
-
-const demoAccounts = [
-  {
-    label: labels.ownerLogin,
-    identifier: 'namer',
-    password: 'namera12345',
-    description: labels.ownerDescription,
-  },
-  {
-    label: labels.customerLogin,
-    identifier: 'customer_demo',
-    password: 'Customer12345',
-    description: labels.customerDescription,
-  },
-];
 
 export function LoginForm() {
   const [formState, setFormState] = useState<LoginFormState>(initialFormState);
@@ -112,29 +90,12 @@ export function LoginForm() {
 
   return (
     <form className="form-stack" onSubmit={handleSubmit}>
-      <div className="demo-login-grid" aria-label={labels.demoAccounts}>
-        {demoAccounts.map((account) => (
-          <button
-            className="demo-login-card"
-            key={account.identifier}
-            type="button"
-            onClick={() => {
-              setFormState({ identifier: account.identifier, password: account.password });
-              setErrors([]);
-            }}
-          >
-            <span>{account.label}</span>
-            <small>{account.description}</small>
-          </button>
-        ))}
-      </div>
-
       <FormError errors={errors} />
       <Input
         label={labels.identifier}
         name="identifier"
         value={formState.identifier}
-        placeholder="customer_demo"
+        placeholder="0590000000 أو name@example.com"
         dir="ltr"
         onChange={(value) => setFormState((current) => ({ ...current, identifier: value }))}
       />
