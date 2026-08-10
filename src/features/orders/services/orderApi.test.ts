@@ -27,7 +27,7 @@ describe('order API service', () => {
       customerName: 'Guest Customer',
       customerPhoneNumber: '0591234567',
       shippingAddress: 'Ramallah',
-      notes: 'Gift wrap',
+      notes: 'Please call before delivery',
     };
 
     await createOrder(request);

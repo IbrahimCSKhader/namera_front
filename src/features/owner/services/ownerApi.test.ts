@@ -27,8 +27,8 @@ describe('owner API service', () => {
     const profile = {
       firstName: 'Namira',
       lastName: 'Owner',
-      phoneNumber: '0590000000',
-      email: 'namera@gmail.com',
+      phoneNumber: '+972 59-576-9185',
+      email: 'nameer.ikhalil@gmail.com',
       address: 'Store address',
     };
     const password = {
@@ -49,8 +49,8 @@ describe('owner API service', () => {
   it('connects store settings endpoints', async () => {
     const settings = {
       storeName: 'Resin Bon',
-      contactPhone: '0590000000',
-      contactEmail: 'namera@gmail.com',
+      contactPhone: '+972 59-576-9185',
+      contactEmail: 'nameer.ikhalil@gmail.com',
       instagramUrl: 'https://instagram.com/resinbon',
       defaultCurrency: 'ILS',
       aboutText: 'Handmade resin gifts.',

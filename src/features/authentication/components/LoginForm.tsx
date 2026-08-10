@@ -33,6 +33,19 @@ const initialFormState: LoginFormState = {
   password: '',
 };
 
+const demoLoginOptions = [
+  {
+    label: 'الدخول كصاحب محل',
+    identifier: 'nameer.ikhalil@gmail.com',
+    password: 'nameer.19',
+  },
+  {
+    label: 'الدخول كزبون تجريبي',
+    identifier: 'customer_demo',
+    password: 'Customer12345',
+  },
+];
+
 export function LoginForm() {
   const [formState, setFormState] = useState<LoginFormState>(initialFormState);
   const [confirmationEmail, setConfirmationEmail] = useState('');
@@ -68,6 +81,26 @@ export function LoginForm() {
     }
   }
 
+  async function handleDemoLogin(option: (typeof demoLoginOptions)[number]) {
+    const nextFormState = {
+      identifier: option.identifier,
+      password: option.password,
+    };
+
+    setFormState(nextFormState);
+    setIsSubmitting(true);
+    setErrors([]);
+
+    try {
+      const user = await login(nextFormState);
+      navigate(user.role === 'Owner' ? ROUTES.ownerDashboard : ROUTES.customerDashboard, { replace: true });
+    } catch (error) {
+      setErrors(resolveErrors(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handleResendConfirmation() {
     if (!confirmationEmail.trim()) {
       setErrors(['اكتب البريد الإلكتروني لإعادة إرسال رابط التفعيل']);
@@ -91,6 +124,19 @@ export function LoginForm() {
   return (
     <form className="form-stack" onSubmit={handleSubmit}>
       <FormError errors={errors} />
+      <div className="demo-login-options" aria-label="خيارات الدخول التجريبي">
+        {demoLoginOptions.map((option) => (
+          <button
+            className="button button-secondary"
+            type="button"
+            key={option.identifier}
+            disabled={isSubmitting}
+            onClick={() => void handleDemoLogin(option)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
       <Input
         label={labels.identifier}
         name="identifier"
