@@ -134,6 +134,8 @@ export type ProductListItem = {
   displayOrder: number;
   isFeatured: boolean;
   isVisible: boolean;
+  visitsCount: number;
+  lastVisitedAt: string | null;
   updatedAt: string;
   primaryImageUrl: string;
 };

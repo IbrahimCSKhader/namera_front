@@ -51,6 +51,10 @@ export function OwnerDashboardPage() {
       ) : (
         <>
           <section className="dashboard-grid">
+            <Stat label="زيارات المتجر" value={stats?.storeVisitsCount ?? 0} />
+            <Stat label="زيارات المنتجات" value={stats?.productVisitsCount ?? 0} />
+            <Stat label="زيارات المتجر اليوم" value={stats?.todayStoreVisitsCount ?? 0} />
+            <Stat label="زيارات المنتجات اليوم" value={stats?.todayProductVisitsCount ?? 0} />
             <Stat label="كل الطلبات" value={stats?.totalOrders ?? 0} />
             <Stat label="طلبات جديدة" value={stats?.pendingOrders ?? 0} />
             <Stat label="قيد الاعتماد" value={stats?.approvedOrders ?? 0} />
@@ -82,6 +86,23 @@ export function OwnerDashboardPage() {
                     <small>{new Date(item.date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' })}</small>
                   </div>
                 ))}
+              </div>
+            </article>
+
+            <article className="chart-panel">
+              <h3>أكثر المنتجات زيارة</h3>
+              <div className="bar-chart">
+                {(stats?.topVisitedProducts ?? []).length > 0 ? (
+                  (stats?.topVisitedProducts ?? []).map((item) => (
+                    <div className="bar-row" key={item.productId}>
+                      <span>{item.productName}</span>
+                      <div><i style={{ width: `${Math.max(8, (item.visitsCount / Math.max(1, stats?.topVisitedProducts?.[0]?.visitsCount ?? 1)) * 100)}%` }} /></div>
+                      <strong>{item.visitsCount}</strong>
+                    </div>
+                  ))
+                ) : (
+                  <p className="empty-state">لا توجد زيارات منتجات بعد.</p>
+                )}
               </div>
             </article>
           </section>

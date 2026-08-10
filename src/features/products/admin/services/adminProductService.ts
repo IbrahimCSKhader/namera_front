@@ -25,6 +25,8 @@ type AdminProductListItemResponse = {
   hasCustomizations: boolean;
   isFeatured: boolean;
   isVisible: boolean;
+  visitsCount: number;
+  lastVisitedAt: string | null;
   displayOrder: number;
   primaryImageUrl: string;
   createdAt: string;
@@ -99,6 +101,8 @@ export async function getAdminProducts(filters: ProductListFilters = {}): Promis
     displayOrder: product.displayOrder,
     isFeatured: product.isFeatured,
     isVisible: product.isVisible,
+    visitsCount: product.visitsCount,
+    lastVisitedAt: product.lastVisitedAt,
     updatedAt: product.updatedAt ?? product.createdAt,
     primaryImageUrl: product.primaryImageUrl,
   }));

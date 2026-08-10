@@ -94,6 +94,17 @@ export type OwnerDashboardStats = {
   customersCount: number;
   productsCount: number;
   revenue: number;
+  storeVisitsCount: number;
+  todayStoreVisitsCount: number;
+  productVisitsCount: number;
+  todayProductVisitsCount: number;
+  topVisitedProducts: Array<{
+    productId: string;
+    productName: string;
+    productSlug: string;
+    visitsCount: number;
+    lastVisitedAt: string | null;
+  }>;
   ordersByStatus: Array<{ status: OrderStatus; label: string; count: number }>;
   revenueByDay: Array<{ date: string; revenue: number }>;
 };

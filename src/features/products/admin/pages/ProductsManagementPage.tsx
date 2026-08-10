@@ -49,6 +49,7 @@ export function ProductsManagementPage() {
     return {
       all: products.length,
       published: products.filter((product) => product.status === 'published').length,
+      visits: products.reduce((sum, product) => sum + product.visitsCount, 0),
       customized: products.filter((product) => product.customizationLabel === 'نعم').length,
     };
   }, [products]);
@@ -68,6 +69,7 @@ export function ProductsManagementPage() {
       </div>
 
       <section className="owner-stats">
+        <Stat label="زيارات المنتجات" value={totals.visits} />
         <Stat label="كل المنتجات" value={totals.all} />
         <Stat label="منشورة" value={totals.published} />
         <Stat label="تحتوي تخصيص" value={totals.customized} />
@@ -108,6 +110,7 @@ export function ProductsManagementPage() {
                 <th>مخصص؟</th>
                 <th>آخر تعديل</th>
                 <th>إجراءات</th>
+                <th>الزيارات</th>
               </tr>
             </thead>
             <tbody>
@@ -132,6 +135,10 @@ export function ProductsManagementPage() {
                         أرشفة
                       </button>
                     </div>
+                  </td>
+                  <td>
+                    <strong>{product.visitsCount.toLocaleString('ar')}</strong>
+                    {product.lastVisitedAt ? <small className="table-subtext">{new Date(product.lastVisitedAt).toLocaleDateString('ar-EG')}</small> : null}
                   </td>
                 </tr>
               ))}

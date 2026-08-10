@@ -3,6 +3,7 @@ import { apiClient } from '../../../../shared/services/api/apiClient';
 import {
   createAdminProduct,
   getAdminCategories,
+  getAdminProducts,
   setAdminCategoryActive,
   updateAdminCategory,
 } from './adminProductService';
@@ -115,6 +116,46 @@ describe('admin product service', () => {
       visibleProductsCount: 1,
     });
     expect(mockedApiClient).toHaveBeenCalledWith('/admin/products/categories');
+  });
+
+  it('maps product visit counters for the owner product list', async () => {
+    mockedApiClient.mockResolvedValueOnce({
+      success: true,
+      message: 'loaded',
+      data: [
+        {
+          id: 'product-1',
+          name: 'Resin tray',
+          slug: 'resin-tray',
+          categoryName: 'Trays',
+          status: 'published',
+          pricingType: 'fixed',
+          basePrice: 120,
+          priceLabel: '120 ILS',
+          inventoryLabel: '7',
+          isLowStock: false,
+          hasCustomizations: false,
+          isFeatured: false,
+          isVisible: true,
+          visitsCount: 14,
+          lastVisitedAt: '2026-08-10T10:00:00.000Z',
+          displayOrder: 1,
+          primaryImageUrl: '/uploads/products/tray.png',
+          createdAt: '2026-08-01T00:00:00.000Z',
+          updatedAt: null,
+        },
+      ],
+      errors: [],
+    });
+
+    const products = await getAdminProducts();
+
+    expect(products[0]).toMatchObject({
+      id: 'product-1',
+      visitsCount: 14,
+      lastVisitedAt: '2026-08-10T10:00:00.000Z',
+    });
+    expect(mockedApiClient).toHaveBeenCalledWith('/admin/products');
   });
 
   it('sends a category update payload to the admin API', async () => {

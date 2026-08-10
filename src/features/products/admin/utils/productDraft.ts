@@ -159,6 +159,8 @@ export function toProductListItem(draft: ProductDraft, categoryName: string, upd
     displayOrder: draft.displayOrder,
     isFeatured: draft.isFeatured,
     isVisible: draft.status === 'published',
+    visitsCount: 0,
+    lastVisitedAt: null,
     updatedAt,
     primaryImageUrl: primaryImage?.imageUrl ?? '',
   };

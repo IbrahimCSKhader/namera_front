@@ -1,7 +1,8 @@
-import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { CustomerRoute } from '../../features/authentication/routes/CustomerRoute';
 import { OwnerRoute } from '../../features/authentication/routes/OwnerRoute';
+import { trackStoreVisit } from '../../features/visits/services/visitApi';
 import { ROUTES } from '../../shared/constants/routes';
 
 const HomePage = lazy(() => import('../../features/public/pages/HomePage').then(({ HomePage }) => ({ default: HomePage })));
@@ -33,6 +34,7 @@ const EditProductPage = lazy(() => import('../../features/products/admin/pages/E
 export function AppRouter() {
   return (
     <Suspense fallback={<main className="app-page"><div className="loading-state"><span /> جار تحميل الصفحة...</div></main>}>
+      <PublicVisitTracker />
       <Routes>
         <Route path={ROUTES.home} element={<HomePage />} />
         <Route path={ROUTES.products} element={<ProductsPage />} />
@@ -64,4 +66,24 @@ export function AppRouter() {
       </Routes>
     </Suspense>
   );
+}
+
+function PublicVisitTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = `${location.pathname}${location.search}`;
+    const isOwnerArea = location.pathname.startsWith('/owner');
+    const isCustomerArea = location.pathname.startsWith('/customer') || location.pathname.startsWith('/account');
+    const authPages: string[] = [ROUTES.login, ROUTES.register, ROUTES.confirmEmail];
+    const isAuthPage = authPages.includes(location.pathname);
+
+    if (isOwnerArea || isCustomerArea || isAuthPage) {
+      return;
+    }
+
+    void trackStoreVisit(path).catch(() => undefined);
+  }, [location.pathname, location.search]);
+
+  return null;
 }
