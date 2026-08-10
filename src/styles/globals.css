@@ -36,6 +36,7 @@ a {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 #root {
@@ -2453,8 +2454,9 @@ img {
 
 .order-media-grid a {
   display: block;
-  width: 74px;
-  height: 74px;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid rgba(216, 194, 187, 0.7);
@@ -2466,6 +2468,82 @@ img {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.orders-list {
+  display: grid;
+  gap: 14px;
+}
+
+.order-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(216, 194, 187, 0.62);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.order-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.order-card h3 {
+  margin: 8px 0 0;
+}
+
+.order-card > header > strong {
+  color: var(--color-primary-dark);
+  font-size: 20px;
+  white-space: nowrap;
+}
+
+.order-items-strip {
+  display: grid;
+  gap: 10px;
+}
+
+.order-item-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+  padding: 10px;
+  background: var(--color-surface-strong);
+  border: 1px solid rgba(216, 194, 187, 0.42);
+  border-radius: var(--radius-md);
+}
+
+.order-item-row.has-image {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.order-item-row > span {
+  min-width: 0;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.order-item-thumb {
+  width: 72px;
+  height: 72px;
+  max-width: 72px;
+  max-height: 72px;
+  object-fit: cover;
+  background: var(--color-surface);
+  border-radius: 12px;
+}
+
+.order-card img:not(.order-item-thumb),
+.customer-panel img {
+  max-width: min(100%, 180px);
+  max-height: 180px;
+  object-fit: cover;
 }
 
 .cart-customization-images {
@@ -3523,6 +3601,32 @@ img {
   .cart-item .table-thumb {
     width: 64px;
     height: 64px;
+  }
+
+  .order-card header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-card > header > strong {
+    white-space: normal;
+  }
+
+  .order-item-row.has-image {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+
+  .order-item-thumb {
+    width: 60px;
+    height: 60px;
+    max-width: 60px;
+    max-height: 60px;
+  }
+
+  .order-media-grid a {
+    flex-basis: 56px;
+    width: 56px;
+    height: 56px;
   }
 
   .cart-item input {

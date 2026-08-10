@@ -56,8 +56,8 @@ export function CustomerOrdersPage() {
               </header>
               <div className="order-items-strip">
                 {order.items.map((item) => (
-                  <div key={item.id}>
-                    {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.productName} loading="lazy" decoding="async" /> : null}
+                  <div className={item.imageUrl ? 'order-item-row has-image' : 'order-item-row'} key={item.id}>
+                    {item.imageUrl ? <img className="order-item-thumb" src={resolveMediaUrl(item.imageUrl)} alt={item.productName} loading="lazy" decoding="async" /> : null}
                     <span>
                       {item.productName} × {item.quantity}
                       <OrderCustomizationMedia item={item} />
