@@ -298,52 +298,85 @@ export function ProductDetailsPage() {
           {product.preparationNote ? <p className="product-prep-note">{product.preparationNote}</p> : null}
 
           <div className="order-helper-strip" aria-label="خطوات الطلب">
-            <span><b>1</b> اختاري الخيارات</span>
-            <span><b>2</b> حددي الكمية</span>
+            <span><b>1</b> اختاري الأساسيات</span>
+            <span><b>2</b> أضيفي لمستك</span>
             <span><b>3</b> أضيفي للسلة</span>
           </div>
 
-          <section className="product-choice-stack">
-            {product.optionGroups.map((group) => (
-              <fieldset className="product-choice-group" key={group.id}>
-                <legend>
-                  {group.name}
-                  {group.isRequired ? <span>مطلوب</span> : null}
-                </legend>
-                {group.description ? <p>{group.description}</p> : null}
-                <div className="choice-grid">
-                  {group.values.map((value) => (
-                    <label className={selectedOptions[group.id] === value.id ? 'choice-pill active' : 'choice-pill'} key={value.id}>
-                      <input
-                        checked={selectedOptions[group.id] === value.id}
-                        name={group.id}
-                        type="radio"
-                        value={value.id}
-                        onChange={() => setSelectedOptions((current) => ({ ...current, [group.id]: value.id }))}
+          <section className="product-choice-stack" aria-label="تخصيص المنتج">
+            <div className="customization-panel-heading">
+              <div>
+                <span>تخصيص المنتج</span>
+                <small>اختاري التفاصيل بهدوء، والاختيارات المطلوبة مميزة بعلامة واضحة.</small>
+              </div>
+            </div>
+
+            {product.optionGroups.length > 0 ? (
+              <section className="customization-section">
+                <div className="customization-section-heading">
+                  <b>1</b>
+                  <div>
+                    <span>الخيارات الأساسية</span>
+                    <small>مثل اللون، الحجم، أو نوع القطعة.</small>
+                  </div>
+                </div>
+
+                {product.optionGroups.map((group) => (
+                  <fieldset className="product-choice-group" key={group.id}>
+                    <legend>
+                      <span>{group.name}</span>
+                      <b className={group.isRequired ? 'required-badge' : 'optional-badge'}>{group.isRequired ? 'مطلوب' : 'اختياري'}</b>
+                    </legend>
+                    {group.description ? <p>{group.description}</p> : null}
+                    <div className="choice-grid">
+                      {group.values.map((value) => (
+                        <label className={selectedOptions[group.id] === value.id ? 'choice-pill active' : 'choice-pill'} key={value.id}>
+                          <input
+                            checked={selectedOptions[group.id] === value.id}
+                            name={group.id}
+                            type="radio"
+                            value={value.id}
+                            onChange={() => setSelectedOptions((current) => ({ ...current, [group.id]: value.id }))}
+                          />
+                          <span>{value.label}</span>
+                          {value.extraPrice > 0 ? <small>+ {value.extraPrice.toLocaleString('ar')} شيكل</small> : null}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                ))}
+              </section>
+            ) : null}
+
+            {product.customizationFields.length > 0 ? (
+              <section className="customization-section">
+                <div className="customization-section-heading">
+                  <b>2</b>
+                  <div>
+                    <span>تفاصيل التخصيص</span>
+                    <small>اكتبي الأسماء، التواريخ، أو ارفعي صورة إذا مطلوبة.</small>
+                  </div>
+                </div>
+
+                <div className="product-custom-field-grid">
+                  {product.customizationFields.map((field) => (
+                    <label className="field admin-field product-custom-field" key={field.id}>
+                      <span>
+                        <span>{field.label}</span>
+                        <b className={field.isRequired ? 'required-badge' : 'optional-badge'}>{field.isRequired ? 'مطلوب' : 'اختياري'}</b>
+                      </span>
+                      {field.description ? <small>{field.description}</small> : null}
+                      <CustomizationFieldControl
+                        field={field}
+                        value={fieldValues[field.id]}
+                        onChange={(value) => updateFieldValue(field.id, value)}
+                        onImageUpload={(file) => uploadCustomFieldImage(field.id, file)}
                       />
-                      <span>{value.label}</span>
-                      {value.extraPrice > 0 ? <small>+ {value.extraPrice.toLocaleString('ar')} شيكل</small> : null}
                     </label>
                   ))}
                 </div>
-              </fieldset>
-            ))}
-
-            {product.customizationFields.map((field) => (
-              <label className="field admin-field product-custom-field" key={field.id}>
-                <span>
-                  {field.label}
-                  {field.isRequired ? <b>مطلوب</b> : null}
-                </span>
-                {field.description ? <small>{field.description}</small> : null}
-                <CustomizationFieldControl
-                  field={field}
-                  value={fieldValues[field.id]}
-                  onChange={(value) => updateFieldValue(field.id, value)}
-                  onImageUpload={(file) => uploadCustomFieldImage(field.id, file)}
-                />
-              </label>
-            ))}
+              </section>
+            ) : null}
 
             <section className={isCustomRequestOpen ? 'product-custom-request-list open' : 'product-custom-request-list'}>
               <div className="custom-request-header">
