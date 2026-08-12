@@ -29,7 +29,8 @@ export function ProductDetailsPage() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [fieldValues, setFieldValues] = useState<Record<string, FieldValue>>({});
   const [customRequest] = useState('');
-  const [customRequestItems, setCustomRequestItems] = useState<CustomRequestPoint[]>(() => [createCustomRequestPoint()]);
+  const [customRequestItems, setCustomRequestItems] = useState<CustomRequestPoint[]>([]);
+  const [isCustomRequestOpen, setIsCustomRequestOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [rating, setRating] = useState(6);
   const [reviewComment, setReviewComment] = useState('');
@@ -119,6 +120,11 @@ export function ProductDetailsPage() {
 
   function addCustomRequestPoint() {
     setCustomRequestItems((current) => [...current, createCustomRequestPoint()]);
+  }
+
+  function openCustomRequest() {
+    setIsCustomRequestOpen(true);
+    setCustomRequestItems((current) => current.length > 0 ? current : [createCustomRequestPoint()]);
   }
 
   function removeCustomRequestPoint(id: string) {
@@ -291,6 +297,12 @@ export function ProductDetailsPage() {
           <strong className="product-detail-price">{product.priceLabel || `${selection.unitPrice.toLocaleString('ar')} شيكل`}</strong>
           {product.preparationNote ? <p className="product-prep-note">{product.preparationNote}</p> : null}
 
+          <div className="order-helper-strip" aria-label="خطوات الطلب">
+            <span><b>1</b> اختاري الخيارات</span>
+            <span><b>2</b> حددي الكمية</span>
+            <span><b>3</b> أضيفي للسلة</span>
+          </div>
+
           <section className="product-choice-stack">
             {product.optionGroups.map((group) => (
               <fieldset className="product-choice-group" key={group.id}>
@@ -333,27 +345,39 @@ export function ProductDetailsPage() {
               </label>
             ))}
 
-            <section className="product-custom-request-list">
-              <div>
-                <span>طلبات تخصيص إضافية من عندك</span>
-                <small>أضف كل فكرة أو ملاحظة كنقطة منفصلة، ويمكن إرفاق صورة مع كل نقطة.</small>
-              </div>
-              {customRequestItems.map((item, index) => (
-                <div className="custom-request-item" key={item.id}>
-                  <label className="field admin-field">
-                    نقطة {index + 1}
-                    <textarea rows={3} value={item.text} placeholder="مثال: الاسم بخط ناعم، أو صورة مرجعية للّون" onChange={(event) => updateCustomRequestPoint(item.id, { text: event.target.value })} />
-                  </label>
-                  <label className="file-picker-inline custom-request-file">
-                    رفع صورة
-                    <input accept="image/*" type="file" onChange={(event) => void uploadCustomRequestImage(item.id, event.target.files?.[0])} />
-                    <span>{item.isUploading ? 'جاري الرفع...' : item.imageUrl ? 'تم رفع الصورة' : 'اختيار صورة'}</span>
-                  </label>
-                  {item.imageUrl ? <img className="custom-request-preview" src={resolveMediaUrl(item.imageUrl)} alt={`تخصيص ${index + 1}`} loading="lazy" decoding="async" /> : null}
-                  <button className="text-button danger" type="button" onClick={() => removeCustomRequestPoint(item.id)}>حذف النقطة</button>
+            <section className={isCustomRequestOpen ? 'product-custom-request-list open' : 'product-custom-request-list'}>
+              <div className="custom-request-header">
+                <div>
+                  <span>طلبات تخصيص إضافية</span>
+                  <small>اختياري: أضيفي ملاحظة أو صورة مرجعية إذا عندك فكرة خاصة.</small>
                 </div>
-              ))}
-              <button className="button button-secondary" type="button" onClick={addCustomRequestPoint}>إضافة نقطة</button>
+                {!isCustomRequestOpen ? (
+                  <button className="button button-secondary" type="button" onClick={openCustomRequest}>إضافة ملاحظة أو صورة</button>
+                ) : null}
+              </div>
+              {isCustomRequestOpen ? (
+                <>
+                  {customRequestItems.map((item, index) => (
+                    <div className="custom-request-item" key={item.id}>
+                      <label className="field admin-field">
+                        ملاحظة {index + 1}
+                        <textarea rows={3} value={item.text} placeholder="مثال: الاسم بخط ناعم، أو صورة مرجعية للون" onChange={(event) => updateCustomRequestPoint(item.id, { text: event.target.value })} />
+                      </label>
+                      <label className="file-picker-inline custom-request-file">
+                        رفع صورة
+                        <input accept="image/*" type="file" onChange={(event) => void uploadCustomRequestImage(item.id, event.target.files?.[0])} />
+                        <span>{item.isUploading ? 'جاري الرفع...' : item.imageUrl ? 'تم رفع الصورة' : 'اختيار صورة'}</span>
+                      </label>
+                      {item.imageUrl ? <img className="custom-request-preview" src={resolveMediaUrl(item.imageUrl)} alt={`تخصيص ${index + 1}`} loading="lazy" decoding="async" /> : null}
+                      <button className="text-button danger" type="button" onClick={() => removeCustomRequestPoint(item.id)}>حذف</button>
+                    </div>
+                  ))}
+                  <div className="custom-request-actions">
+                    <button className="button button-secondary" type="button" onClick={addCustomRequestPoint}>إضافة ملاحظة أخرى</button>
+                    <button className="text-button" type="button" onClick={() => setIsCustomRequestOpen(false)}>إخفاء</button>
+                  </div>
+                </>
+              ) : null}
             </section>
           </section>
 

@@ -22,6 +22,7 @@ export function CartPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const total = useMemo(() => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [items]);
+  const itemCount = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
 
   useEffect(() => {
     if (!user) {
@@ -102,7 +103,7 @@ export function CartPage() {
           <div>
             <p className="eyebrow">السلة</p>
             <h2>مراجعة الطلب</h2>
-            <p>راجع المنتجات والتخصيصات، ثم أكمل معلومات التواصل لإرسال الطلب.</p>
+            <p>راجعي المنتجات، اكتبي بيانات التواصل، وبعدها أرسلي الطلب مباشرة.</p>
           </div>
           <Link className="button button-secondary" to={ROUTES.products}>متابعة التسوق</Link>
         </section>
@@ -113,28 +114,53 @@ export function CartPage() {
         {items.length === 0 ? (
           <p className="empty-state">السلة فارغة حاليا.</p>
         ) : (
-          <section className="cart-layout">
-            <div className="cart-items">
-              {items.map((item) => (
-                <article className="cart-item" key={item.cartItemId}>
-                  {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}
-                  <div>
-                    <h3>{item.name}</h3>
-                    <p>{item.priceLabel || `${item.unitPrice.toLocaleString('ar')} شيكل`}</p>
-                    {item.customizationSummary ? <small className="cart-customization-summary">{item.customizationSummary}</small> : null}
-                    <CartCustomizationImages imageUrls={collectCartCustomizationImageUrls(item)} productName={item.name} />
-                  </div>
-                  <input min="0" type="number" value={item.quantity} onChange={(event) => changeQuantity(item.cartItemId, Number(event.target.value))} />
-                </article>
-              ))}
+          <>
+            <div className="checkout-steps" aria-label="خطوات إتمام الطلب">
+              <span className="active"><b>1</b> مراجعة المنتجات</span>
+              <span><b>2</b> بيانات التواصل</span>
+              <span><b>3</b> تأكيد الإرسال</span>
             </div>
 
-            <aside className="cart-summary">
-              <h3>ملخص الطلب</h3>
-              <strong>{total.toLocaleString('ar')} شيكل</strong>
+            <section className="cart-layout">
+              <div className="cart-items">
+                <div className="cart-section-heading">
+                  <div>
+                    <span>منتجات الطلب</span>
+                    <small>{itemCount.toLocaleString('ar')} قطعة داخل السلة</small>
+                  </div>
+                  <strong>{total.toLocaleString('ar')} شيكل</strong>
+                </div>
+                {items.map((item) => (
+                  <article className="cart-item" key={item.cartItemId}>
+                    {item.imageUrl ? <img src={resolveMediaUrl(item.imageUrl)} alt={item.name} loading="lazy" decoding="async" /> : <span className="table-thumb empty" />}
+                    <div className="cart-item-body">
+                      <h3>{item.name}</h3>
+                      <p>{item.priceLabel || `${item.unitPrice.toLocaleString('ar')} شيكل`}</p>
+                      {item.customizationSummary ? <small className="cart-customization-summary">{item.customizationSummary}</small> : null}
+                      <CartCustomizationImages imageUrls={collectCartCustomizationImageUrls(item)} productName={item.name} />
+                    </div>
+                    <div className="cart-quantity-control" aria-label={`كمية ${item.name}`}>
+                      <button type="button" onClick={() => changeQuantity(item.cartItemId, item.quantity - 1)} aria-label="تقليل الكمية">-</button>
+                      <input min="0" type="number" value={item.quantity} onChange={(event) => changeQuantity(item.cartItemId, Number(event.target.value))} />
+                      <button type="button" onClick={() => changeQuantity(item.cartItemId, item.quantity + 1)} aria-label="زيادة الكمية">+</button>
+                      <small>{(item.unitPrice * item.quantity).toLocaleString('ar')} شيكل</small>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <aside className="cart-summary">
+              <div className="cart-summary-total">
+                <span>الإجمالي</span>
+                <strong>{total.toLocaleString('ar')} شيكل</strong>
+              </div>
               <div className="cart-contact-box">
                 <span>{isAuthenticated ? 'معلومات الحساب' : 'طلب بدون حساب'}</span>
                 <p>{isAuthenticated ? 'يمكن تعديل المعلومات لهذا الطلب فقط.' : 'لا يحتاج الطلب إلى تسجيل دخول، فقط اترك معلومات التواصل.'}</p>
+              </div>
+              <div className="cart-form-heading">
+                <span>بيانات التواصل والتوصيل</span>
+                <small>هذه المعلومات تستخدم لإرسال الطلب وتأكيد التفاصيل.</small>
               </div>
               <label className="field admin-field">
                 اسم الزبون
@@ -155,10 +181,11 @@ export function CartPage() {
               {error ? <div className="form-error">{error}</div> : null}
               {message ? <div className="form-success">{message}</div> : null}
               <button className="button button-primary" type="button" disabled={isSubmitting} onClick={() => void submitOrder()}>
-                {isSubmitting ? 'جار إرسال الطلب...' : 'إرسال الطلب'}
+                {isSubmitting ? 'جار إرسال الطلب...' : 'تأكيد وإرسال الطلب'}
               </button>
-            </aside>
-          </section>
+              </aside>
+            </section>
+          </>
         )}
       </div>
     </main>
