@@ -1012,18 +1012,6 @@ img {
   border-radius: 999px;
 }
 
-.demo-login-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.demo-login-options .button {
-  width: 100%;
-  min-height: 48px;
-  padding: 0 16px;
-}
-
 .resend-confirmation-box {
   display: grid;
   gap: 12px;
@@ -3746,10 +3734,6 @@ img {
   }
 
   .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .demo-login-options {
     grid-template-columns: 1fr;
   }
 
